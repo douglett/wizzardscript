@@ -6,10 +6,12 @@
 
 namespace WizParse {
 	using namespace std;
-	typedef  vector<string>  vecs;
 
-// >> state
-	Tokenizer tok;
+	// >> definitions
+	typedef  vector<string>  vecs;
+	class parse_error : public runtime_error {
+		using runtime_error::runtime_error;
+	};
 	const vector<string> keywords = {
 		"static", "class",
 		"print"
@@ -17,12 +19,12 @@ namespace WizParse {
 		// "push", "pop", "concat", "clear",
 		// "int", "float", "bool", "string"
 	};
+	
+	// >> state
+	Tokenizer tok;
 	vecs presults;
 
-// >> error handling
-	class parse_error : public runtime_error {
-		using runtime_error::runtime_error;
-	};
+	// >> error handling
 	int error(const string& s) {
 		throw parse_error(s);
 	}
@@ -30,7 +32,7 @@ namespace WizParse {
 		cout << "> " << s << endl;
 	}
 
-// >> basic token parsing
+	// >> basic token parsing
 	int accept(const string& rulesstr, vecs& results = presults) {
 		const int pos = tok.pos;
 		const auto rules = splitstr(rulesstr);
@@ -57,14 +59,4 @@ namespace WizParse {
 			error("missing rule: \"" + rulesstr + "\"");
 		return 1;
 	}
-	
-// >> class structure
-	int pclass() {
-		// vecs results;
-		require("static class $identifier ;");
-		auto classname = presults[2];
-		trace("begin class: " + classname);
-		trace("end class: " + classname);
-		return 1;
-	}
-};
+}
