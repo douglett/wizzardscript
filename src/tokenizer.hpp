@@ -9,12 +9,13 @@ struct Tokenizer {
 	struct Tok { string str; int vpos; int hpos; };
 	const Tok TOK_EOF = { "$EOF", -1, -1 };
 	vector<Tok> tok;
+	string errormsg;
 	int pos = 0;
 
 	int tokenize(const string& fname) {
 		fstream fs(fname, ios::in);
 		if (!fs.is_open())
-			return fprintf(stderr, "error opening file: %s\n", fname.c_str()), 0;
+			return error("error: opening file: " + fname);
 		// setup
 		string line, t;
 		int linepos = 0, hpos = 0;
@@ -35,7 +36,7 @@ struct Tokenizer {
 						t += line[i];
 					t += '"';
 					if (i >= line.length())
-						return fprintf(stderr, "error, unterminated string line %i\n", linepos), 0;
+						return error("error: unterminated string, line " + to_string(linepos));
 				}
 				else if (!isalphanum(c))  addtok(), t += c, addtok();  // special characters
 				else  t += c;  // normal characters
@@ -44,6 +45,12 @@ struct Tokenizer {
 		// ok
 		show();
 		return 1;
+	}
+
+	int error(const string& msg) {
+		// fprintf(stderr, "%s\n", msg.c_str());
+		errormsg = msg;
+		return 0;
 	}
 
 	void show() {

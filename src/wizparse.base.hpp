@@ -19,6 +19,7 @@ namespace WizParse {
 		// "push", "pop", "concat", "clear",
 		// "int", "float", "bool", "string"
 	};
+	int pclass();
 	
 	// >> state
 	Tokenizer tok;
@@ -58,5 +59,11 @@ namespace WizParse {
 		if (!accept(rulesstr, results))
 			error("missing rule: \"" + rulesstr + "\"");
 		return 1;
+	}
+
+	int pfile(const string& fname) {
+		if (!tok.tokenize(fname))
+			error(tok.errormsg);
+		return pclass();
 	}
 }
