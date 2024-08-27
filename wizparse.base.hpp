@@ -6,6 +6,7 @@
 
 namespace WizParse {
 	using namespace std;
+	typedef  vector<string>  vecs;
 
 // >> state
 	Tokenizer tok;
@@ -16,6 +17,7 @@ namespace WizParse {
 		// "push", "pop", "concat", "clear",
 		// "int", "float", "bool", "string"
 	};
+	vecs presults;
 
 // >> error handling
 	class parse_error : public runtime_error {
@@ -24,36 +26,45 @@ namespace WizParse {
 	int error(const string& s) {
 		throw parse_error(s);
 	}
+	void trace(const string& s) {
+		cout << "> " << s << endl;
+	}
 
 // >> basic token parsing
-	int accept(const string& rulesstr) {
+	int accept(const string& rulesstr, vecs& results = presults) {
 		const int pos = tok.pos;
 		const auto rules = splitstr(rulesstr);
-		vector<string> results;
-		return 0;
-
+		results = {};
 		// parse rules
-		// for (const auto& rule : rules) {
-		// 	if (rule == "$identifier" && isidentifier(tok.peek()))
-		// 		results.push(tok.get());
-		// 	else if (rule == tok.peek())
-		// 		results.push(tok.get());
-		// 	else
-		// 		return tok.pos = pos, results = {}, 0;
-		// }
-		// // all found
-		// return 1;
+		for (const auto& rule : rules) {
+			if (rule == "$identifier" && isidentifier(tok.peek()))
+				results.push_back(tok.get());
+			else if (rule == tok.peek())
+				results.push_back(tok.get());
+			else
+				return tok.pos = pos, results = {}, 0;
+		}
+		// all found
+		return 1;
 	}
-	// int peek(const string& rulesstr) {
-	int require(const string& rulesstr) {
-		if (!accept(rulesstr))
+	int peek(const string& rulesstr, vecs& results = presults) {
+		const int pos = tok.pos;
+		if (!accept(rulesstr, results))  return tok.pos = pos, 0;
+		return 1;
+	}
+	int require(const string& rulesstr, vecs& results = presults) {
+		if (!accept(rulesstr, results))
 			error("missing rule: \"" + rulesstr + "\"");
 		return 1;
 	}
 	
 // >> class structure
 	int pclass() {
+		// vecs results;
 		require("static class $identifier ;");
-		return 0;
+		auto classname = presults[2];
+		trace("begin class: " + classname);
+		trace("end class: " + classname);
+		return 1;
 	}
 };

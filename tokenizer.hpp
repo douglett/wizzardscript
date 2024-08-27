@@ -7,6 +7,7 @@ using namespace std;
 
 struct Tokenizer {
 	struct Tok { string str; int vpos; int hpos; };
+	const Tok TOK_EOF = { "$EOF", -1, -1 };
 	vector<Tok> tok;
 	int pos = 0;
 
@@ -52,6 +53,15 @@ struct Tokenizer {
 		cout << endl;
 	}
 
-	// int eof() {
-	// }
+	int eof() {
+		return pos < 0 || pos >= (int)tok.size();
+	}
+	const string& peek() {
+		if (eof())  return TOK_EOF.str;
+		return tok[ pos ].str;
+	}
+	const string& get() {
+		if (eof())  return TOK_EOF.str;
+		return tok[ pos++ ].str;
+	}
 };
