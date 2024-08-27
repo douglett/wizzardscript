@@ -1,21 +1,35 @@
 #pragma once
 #include <string>
+#include <vector>
+#include <sstream>
+using namespace std;
 
+// parsing
 int isalphanum(char c) {
 	return isalnum(c) || c == '_';
 }
-int isnumber(const std::string& s) {
+int isnumber(const string& s) {
 	for (auto c : s)
 		if (!isdigit(c))  return 0;
 	return 1;
 }
-int isidentifier(const std::string& s) {
+int isidentifier(const string& s) {
 	if (s.length() == 0)  return 0;
 	if (!isalpha(s[0]) && s[0] != '_')  return 0;
 	for (size_t i = 1; i < s.length(); i++)
 		if ( !isalphanum(s[0]) )  return 0;
 	return 1;
 }
-int isliteral(const std::string& s) {
+int isliteral(const string& s) {
 	return s.length() >= 2 && s.front() == '"' && s.back() == '"';
+}
+
+// strings
+vector<string> splitstr(const string str) {
+	vector<string> vs;
+	stringstream ss(str);
+	string s;
+	while (ss >> s)
+		vs.push_back(s);
+	return vs;
 }

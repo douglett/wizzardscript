@@ -1,9 +1,10 @@
 #include <iostream>
-#include "wizparse.hpp"
+#include "wizparse.base.hpp"
 using namespace std;
 
 int main() {
-	printf("hello world!\n");
+	printf("tokenizing...\n");
 	WizParse::tok.tokenize("test.wizz");
+	printf("parsing...\n");
 	WizParse::pclass();
 }
