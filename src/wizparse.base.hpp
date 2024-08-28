@@ -3,7 +3,8 @@
 #include <vector>
 #include <cassert>
 #include "tokenizer.hpp"
-// #include "helpers.hpp"
+#include "helpers.hpp"
+#include "node.hpp"
 
 namespace WizParse {
 	using namespace std;
@@ -22,20 +23,6 @@ namespace WizParse {
 	// const vector<string> basetypes = {
 	// 	"int", "float", "bool", "string"
 	// };
-	struct Node {
-		enum Type { T_NUMBER, T_STRING, T_LIST };
-		Type type = T_LIST;
-		int num = 0;
-		string str;
-		vector<Node> list;
-		Node() {}
-		Node(int n) { type = T_NUMBER; num = n; }
-		// Node(const string& s) { type = T_STRING; str = s; }
-		Node(const char* s) { type = T_STRING; str = s; }
-		Node(const vector<Node>& vn) { type = T_LIST; list = vn; }
-		Node(initializer_list<Node> init) { type = T_LIST; list = {}; for (const auto& n : init) list.push_back(n); }
-		Node& push(const Node& n) { assert(type == T_LIST); list.push_back(n); return list.back(); }
-	};
 
 	// >> forward-define
 	int istype(const string& str);
@@ -45,8 +32,8 @@ namespace WizParse {
 	
 	// >> state
 	Tokenizer tok;
-	Node program;
 	vecs presults;
+	Node program({});
 
 	// >> error handling
 	int error(const string& s) {
@@ -111,11 +98,21 @@ namespace WizParse {
 	}
 
 	// >> begin parsing
+	void initprogram() {
+		program = {
+			{ "info",
+				{ "author", "Professor of Virtual Anthropology" },
+				{ "mainclass" }
+			}
+		};
+	}
 	int pfile(const string& fname) {
+		initprogram();
 		try {
 			if (!tok.tokenize(fname))
 				error(tok.errormsg);
 			pclass();
+			shownode(program);  cout << endl;
 			return true;
 		}
 		catch (parse_error& p) {

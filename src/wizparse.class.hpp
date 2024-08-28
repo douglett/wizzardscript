@@ -17,6 +17,8 @@ namespace WizParse {
 		trace("begin class: " + classname);
 		auto& static_init = program.push({ "function", classmember("static_init"), {} });
 		auto& static_init_block = static_init.push({ "block" });
+		// set as main class
+		program[0].findExpression("mainclass").push(classname.c_str());
 		// block or flat class
 		int isblock = accept("{");
 		if (!isblock)  require(";");
