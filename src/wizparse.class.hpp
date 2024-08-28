@@ -3,7 +3,7 @@
 
 namespace WizParse {
 	int pfunction(Node& parent);
-	
+
 	string classname;
 
 	const char* classmember(const string& name) {
@@ -35,6 +35,14 @@ namespace WizParse {
 	}
 
 	int pfunction(Node& parent) {
-		return 0;
+		if (!accept("$type $identifier ("))  return 0;
+		auto type = presults[0];
+		auto name = presults[1];
+		trace("begin function: " + type + " " + name);
+		auto& func = parent.push({ "function", classmember(name), {} });
+		// TODO: parse function arguments
+		require(")");
+		// pblock(func, "function");
+		return 1;
 	}
 }

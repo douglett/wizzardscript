@@ -18,10 +18,12 @@ namespace WizParse {
 		"print"
 		// "if", "else", "while", "return",
 		// "push", "pop", "concat", "clear",
-		// "int", "float", "bool", "string"
 	};
+	// const vector<string> basetypes = {
+	// 	"int", "float", "bool", "string"
+	// };
 	struct Node {
-		enum Type { T_NIL=0, T_NUMBER, T_STRING, T_LIST };
+		enum Type { T_NUMBER, T_STRING, T_LIST };
 		Type type = T_LIST;
 		int num = 0;
 		string str;
@@ -36,7 +38,8 @@ namespace WizParse {
 	};
 
 	// >> forward-define
-	//   .class
+	int istype(const string& str);
+	// .class
 	extern string classname;
 	int pclass();
 	
@@ -52,6 +55,16 @@ namespace WizParse {
 	void trace(const string& s) {
 		cout << "> " << s << endl;
 	}
+	void shownode(const Node& n) {
+		switch (n.type) {
+			case Node::T_NUMBER:  cout << n.num << " ";  break;
+			case Node::T_STRING:  cout << n.str << " ";  break;
+			case Node::T_LIST:    cout << "( ";
+				for (const auto& nn : n.list)  shownode(nn);
+				cout << " ) ";
+				break;
+		}
+	}
 
 	// >> basic token parsing
 	int accept(const string& rulesstr, vecs& results = presults) {
@@ -62,7 +75,8 @@ namespace WizParse {
 		for (const auto& rule : rules) {
 			if (rule == "$identifier" && isidentifier(tok.peek()))
 				results.push_back(tok.get());
-			// else if (rule == "$type" && )
+			else if (rule == "$type" && istype(tok.peek()))
+				results.push_back(tok.get());
 			// else if (rule == "$number" && )
 			// else if (rule == "$literal" && )
 			else if (rule == "$EOF" && tok.eof())
@@ -85,11 +99,21 @@ namespace WizParse {
 			error("missing rule: \"" + rulesstr + "\"");
 		return 1;
 	}
+	int istype(const string& str) {
+		return str == "int";
+	}
 
 	// >> begin parsing
 	int pfile(const string& fname) {
-		if (!tok.tokenize(fname))
-			error(tok.errormsg);
-		return pclass();
+		try {
+			if (!tok.tokenize(fname))
+				error(tok.errormsg);
+			pclass();
+			return true;
+		}
+		catch (parse_error& p) {
+			shownode(program);  cout << endl;
+			throw p;
+		}
 	}
 }
