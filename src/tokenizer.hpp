@@ -6,7 +6,7 @@
 using namespace std;
 
 struct Tokenizer {
-	struct Tok { string str; int vpos; int hpos; };
+	struct Tok { string str; int lpos; int hpos; };
 	const Tok TOK_EOF = { "$EOF", -1, -1 };
 	vector<Tok> tok;
 	string errormsg;
@@ -47,12 +47,12 @@ struct Tokenizer {
 		return 1;
 	}
 
+	// helpers
 	int error(const string& msg) {
 		// fprintf(stderr, "%s\n", msg.c_str());
 		errormsg = msg;
 		return 0;
 	}
-
 	void show() {
 		cout << "tokens: ";
 		for (const auto& t : tok)
@@ -60,15 +60,17 @@ struct Tokenizer {
 		cout << endl;
 	}
 
+	// parsing
 	int eof() {
 		return pos < 0 || pos >= (int)tok.size();
 	}
+	int linepos() {
+		return eof() ? TOK_EOF.lpos : tok[pos].lpos;
+	}
 	const string& peek() {
-		if (eof())  return TOK_EOF.str;
-		return tok[ pos ].str;
+		return eof() ? TOK_EOF.str : tok[pos].str;
 	}
 	const string& get() {
-		if (eof())  return TOK_EOF.str;
-		return tok[ pos++ ].str;
+		return eof() ? TOK_EOF.str : tok[pos++].str;
 	}
 };
