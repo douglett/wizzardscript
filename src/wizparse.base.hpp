@@ -52,6 +52,12 @@ namespace WizParse {
 	int error(const string& s) {
 		throw parse_error(s + " :: line " + to_string(tok.linepos()) + ", at \"" + tok.peek() + "\"");
 	}
+	int error_expected(const string& s) {
+		return error("expected: " + s);
+	}
+	int error_unexpected() {
+		return error("unexpected token (" + tok.peek() + ")");
+	}
 	void trace(const string& s) {
 		cout << "> " << s << endl;
 	}
@@ -77,27 +83,28 @@ namespace WizParse {
 				results.push_back(tok.get());
 			else if (rule == "$type" && istype(tok.peek()))
 				results.push_back(tok.get());
-			// else if (rule == "$number" && )
+			else if (rule == "$number" && isnumber(tok.peek()))
+				results.push_back(tok.get());
 			// else if (rule == "$literal" && )
 			else if (rule == "$EOF" && tok.eof())
 				results.push_back(tok.get());
 			else if (rule == tok.peek())
 				results.push_back(tok.get());
 			else
-				return tok.pos = pos, results = {}, 0;
+				return tok.pos = pos, results = {}, false;
 		}
 		// all found
-		return 1;
+		return true;
 	}
 	int peek(const string& rulesstr, vecs& results = presults) {
 		const int pos = tok.pos;
-		if (!accept(rulesstr, results))  return tok.pos = pos, 0;
-		return 1;
+		if (!accept(rulesstr, results))  return tok.pos = pos, false;
+		return true;
 	}
 	int require(const string& rulesstr, vecs& results = presults) {
 		if (!accept(rulesstr, results))
 			error("missing rule: \"" + rulesstr + "\"");
-		return 1;
+		return true;
 	}
 	int istype(const string& str) {
 		return str == "int";

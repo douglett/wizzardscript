@@ -44,14 +44,14 @@ struct Tokenizer {
 		}
 		// ok
 		show();
-		return 1;
+		return true;
 	}
 
 	// helpers
 	int error(const string& msg) {
 		// fprintf(stderr, "%s\n", msg.c_str());
 		errormsg = msg;
-		return 0;
+		return false;
 	}
 	void show() {
 		cout << "tokens: ";

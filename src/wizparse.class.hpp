@@ -22,27 +22,53 @@ namespace WizParse {
 		if (!isblock)  require(";");
 		// class contents
 		while (true)
-			// if      ( peek("}") || peek("$EOF") )  break;
 			if      ( pfunction(static_init_block) )  ;
 			// else if ( pdim(static_init_block) )  ;
 			else    break;
 		// end class
 		if (isblock)  require("}");
 		require("$EOF");
-		trace("end class: " + classname);
 		classname = "";
-		return 1;
+		return true;
+	}
+
+	int pprint(Node& parent) {
+		if (!accept("print"))  return false;
+		auto& stmt = parent.push({ "print" });
+		require("$number"),  stmt.push( stoi(presults[0]) );
+		while (accept(","))
+			require("$number"),  stmt.push( stoi(presults[0]) );
+		require(";");
+		return true;
+	}
+
+	int pblock(Node& parent, const string& name) {
+		// block start
+		require("{");
+		trace("begin block: " + name);
+		auto& block = parent.push({ "block" });
+		// statements
+		while (true) {
+			if (tok.eof() || tok.peek() == "}")  break;
+			pprint(block)
+				|| error_unexpected();
+		}
+		// block end
+		require("}");
+		trace("end block: " + name);
+		return true;
 	}
 
 	int pfunction(Node& parent) {
-		if (!accept("$type $identifier ("))  return 0;
+		if (!accept("$type $identifier ("))  return false;
 		auto type = presults[0];
 		auto name = presults[1];
 		trace("begin function: " + type + " " + name);
 		auto& func = parent.push({ "function", classmember(name), {} });
 		// TODO: parse function arguments
 		require(")");
-		// pblock(func, "function");
-		return 1;
+		pblock(func, "function");
+		// pblock(func, "function") || error_expected("block");
+		return true;
 	}
 }
