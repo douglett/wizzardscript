@@ -27,12 +27,14 @@ namespace WizParse {
 	// .class
 	extern string classname;
 	int pclass();
+	// .vars
+	int pvarpath(Node& parent, string& type);
 	
 	// >> state
 	Tokenizer tok;
 	vecs presults;
 	Node program({});
-	bool dotrace = false;
+	bool dotrace = true;
 
 	// >> error handling
 	int error(const string& s) {

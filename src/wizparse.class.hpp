@@ -34,12 +34,24 @@ namespace WizParse {
 		return true;
 	}
 
+	// temporary 
+	int pexpr(Node& parent) {
+		string type;
+		if (pvarpath(parent, type))
+			return (type == "int" || error_expected("variable-as-number")), true;
+		else if (accept("$number"))
+			return parent.push( stoi(presults[0]) ), true;
+		return false;
+	}
+
 	int pprint(Node& parent) {
 		if (!accept("print"))  return false;
 		auto& stmt = parent.push({ "print" });
-		require("$number"),  stmt.push( stoi(presults[0]) );
+		// require("$number"),  stmt.push( stoi(presults[0]) );
+		pexpr(stmt) || error_expected("expression");
 		while (accept(","))
-			require("$number"),  stmt.push( stoi(presults[0]) );
+			// require("$number"),  stmt.push( stoi(presults[0]) );
+			pexpr(stmt) || error_expected("expression");
 		require(";");
 		return true;
 	}

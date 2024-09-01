@@ -35,7 +35,7 @@ namespace WizRun {
 		for (size_t i = 1; i < block.list.size(); i++) {
 			auto& stmt = block.list[i];
 			if      (stmt.issx("print"))  rprint(stmt);
-			else    throw runtime_error("unknown statement in block: " + stmt.str);
+			else    throw runtime_error("unknown statement in block: " + stmt.tostr());
 		}
 		return 0;
 	}

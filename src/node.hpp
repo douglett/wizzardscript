@@ -52,7 +52,7 @@ struct Node {
 			case Node::T_LIST:
 				string s = "( ";
 				for (const auto& nn : list)
-					s += nn.tostr();
+					s += nn.tostr() + " ";
 				s += " ) ";
 				return s;
 		}
