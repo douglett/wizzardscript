@@ -8,10 +8,11 @@ struct UnitTest {
 		WizParse::reset();
 		WizRun::reset();
 		WizRun::output = &ss;
-		ss.str(""), ss.clear();
+		resetio();
 	}
 	virtual void teardown() {}
 	virtual void dotests() {}
+	void resetio() { ss.str(""), ss.clear(); }
 
 	int expect(const string& name, bool value) {
 		cout << "> running test: " << name << "... ";

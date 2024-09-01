@@ -30,6 +30,10 @@ struct Tokenizer {
 				hpos++;
 				if (isspace(c))  addtok();  // spaces
 				// line comments
+				else if (c == '/' && line.substr(i, 2) == "//") {
+					addtok();
+					break;
+				}
 				// string
 				else if (c == '"') {
 					addtok(), t = c;

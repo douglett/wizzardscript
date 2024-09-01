@@ -9,9 +9,8 @@ namespace WizRun {
 
 	Node program({});
 
+	// reset memory state
 	int reset() {
-		output = &cout;
-		program = Node({});
 		return 0;
 	}
 
