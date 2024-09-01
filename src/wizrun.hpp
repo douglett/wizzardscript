@@ -41,7 +41,12 @@ namespace WizRun {
 		*output << endl;
 		return 0;
 	}
-	// int rblock() 
+	int rblock(const Node& block) {
+		for (size_t i = 1; i < block.list.size(); i++)
+			block[i].aslist(),
+			rsxpr( block[i] );
+		return 0;
+	}
 
 	int rsxpr(const Node& sx) {
 		if (sx.type == Node::T_NUMBER)  return sx.num;
@@ -49,11 +54,7 @@ namespace WizRun {
 		auto& type = sx[0].str;
 
 		// statements
-		if (type == "block") {
-			for (size_t i = 1; i < sx.list.size(); i++)
-				rsxpr( sx[i] );
-			return 0;
-		}
+		if (type == "block")  return rblock(sx);
 		else if (type == "print")  return rprint(sx);
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];

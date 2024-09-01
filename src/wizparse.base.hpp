@@ -25,9 +25,10 @@ namespace WizParse {
 	// >> forward-define
 	int istype(const string& str);
 	// .class
-	extern string classname;
+	const char* classmember(const string& name);
 	int pclass();
 	// .vars
+	void scope_dim(const string& type, const string& name);
 	int pvarpath(Node& parent, string& type);
 	
 	// >> state
@@ -38,7 +39,7 @@ namespace WizParse {
 
 	// >> error handling
 	int error(const string& s) {
-		throw parse_error(s + " :: line " + to_string(tok.linepos()) + ", at \"" + tok.peek() + "\"");
+		throw parse_error(s + " :: line " + to_string(tok.linepos())); // + ", at \"" + tok.peek() + "\"");
 	}
 	int error_expected(const string& s) {
 		return error("expected: " + s);

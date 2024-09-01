@@ -2,9 +2,9 @@
 #include "wizparse.base.hpp"
 
 namespace WizParse {
-	int pfunction(Node& parent);
+	static int pfunction(Node& parent);
 
-	string classname;
+	static string classname;
 
 	const char* classmember(const string& name) {
 		static string s;
@@ -35,7 +35,7 @@ namespace WizParse {
 	}
 
 	// temporary 
-	int pexpr(Node& parent) {
+	static int pexpr(Node& parent) {
 		string type;
 		if (pvarpath(parent, type))
 			return (type == "int" || error_expected("variable-as-number")), true;
@@ -45,7 +45,7 @@ namespace WizParse {
 		return error_expected("expression");
 	}
 
-	int pprint(Node& parent) {
+	static int pprint(Node& parent) {
 		if (!accept("print"))  return false;
 		auto& stmt = parent.push({ "print" });
 		pexpr(stmt);
@@ -55,7 +55,19 @@ namespace WizParse {
 		return true;
 	}
 
-	int pset(Node& parent) {
+	static int pdim(Node& parent) {
+		if (!accept("$type $identifier"))  return false;
+		auto type = presults[0], name = presults[1];
+		scope_dim(type, name);
+		if (accept("=")) {
+			auto& stmt = parent.push({ "set_global", classmember(name) });
+			pexpr(stmt);
+		}
+		require(";");
+		return true;
+	}
+
+	static int pset(Node& parent) {
 		if (!accept("$identifier ="))  return false;
 		auto name = presults[0];
 		auto& stmt = parent.push({ "set_global", classmember(name) });
@@ -64,7 +76,7 @@ namespace WizParse {
 		return true;
 	}
 
-	int pblock(Node& parent, const string& name) {
+	static int pblock(Node& parent, const string& name) {
 		// block start
 		require("{");
 		trace("begin block: " + name);
@@ -73,6 +85,7 @@ namespace WizParse {
 		while (true) {
 			if (tok.eof() || tok.peek() == "}")  break;
 			pprint(block)
+				|| pdim(block)
 				|| pset(block)
 				|| error_unexpected();
 		}
@@ -82,7 +95,7 @@ namespace WizParse {
 		return true;
 	}
 
-	int pfunction(Node& parent) {
+	static int pfunction(Node& parent) {
 		if (!accept("$type $identifier ("))  return false;
 		auto type = presults[0];
 		auto name = presults[1];
