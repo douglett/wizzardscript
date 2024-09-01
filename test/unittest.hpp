@@ -2,8 +2,14 @@
 #include "../src/wizparse.class.hpp"
 
 struct UnitTest {
+	const string
+		CLEARCOL = "\033[0m",
+		RED = "\033[31m",
+		GREEN = "\033[32m",
+		CYAN = "\033[36m";
 	stringstream ss;
 
+	virtual string suitename() { return "UnitTest"; }
 	virtual void setup() {
 		WizParse::reset();
 		WizRun::reset();
@@ -16,13 +22,14 @@ struct UnitTest {
 
 	int expect(const string& name, bool value) {
 		cout << "> running test: " << name << "... ";
-		if (value)  cout << "\033[32m" << "OK";
-		else        cout << "\033[31m" << "Fail";
-		cout << "\033[0m" << endl;
+		if (value)  cout << GREEN << "OK";
+		else        cout << RED << "Fail";
+		cout << CLEARCOL << endl;
 		return value;
 	}
 
 	int runall() {
+		cout << CYAN << "Running test suite: " << suitename() << CLEARCOL << endl;
 		setup();
 		try {
 			dotests();

@@ -20,9 +20,7 @@ namespace WizParse {
 		// "if", "else", "while", "return",
 		// "push", "pop", "concat", "clear",
 	};
-	// const vector<string> basetypes = {
-	// 	"int", "float", "bool", "string"
-	// };
+	const vector<string> basetypes = { "int" };
 
 	// >> forward-define
 	int istype(const string& str);
@@ -86,7 +84,9 @@ namespace WizParse {
 		return true;
 	}
 	int istype(const string& str) {
-		return str == "int";
+		for (auto& t : basetypes)
+			if (t == str)  return true;
+		return false;
 	}
 
 	// >> begin parsing

@@ -2,6 +2,8 @@
 #include "unittest.hpp"
 
 struct Test01 : public UnitTest {
+	string suitename() { return "Test01"; }
+
 	void dotests() {
 		WizParse::pfile("test/01_print.wizz");
 		WizRun::run(WizParse::program);
