@@ -24,21 +24,29 @@ struct Node {
 			list.push_back(n);
 	}
 
-	// access
+	// list methods
+	void aslist() {
+		if (type != T_LIST)
+			throw runtime_error("Node: expected list");
+	}
 	Node& operator[](size_t pos) {
-		assert(type == T_LIST);
+		aslist();
 		return list.at(pos);
 	}
 	Node& push(const Node& n) {
-		assert(type == T_LIST);
+		aslist();
 		list.push_back(n);
 		return list.back();
 	}
-	Node& findExpression(const string& name) {
-		assert(type == T_LIST);
+	int issx(const string& sxname = "") {
+		if (type == T_LIST && list.size() && list[0].type == T_STRING)
+			return sxname == "" ? true : list[0].str == sxname;
+		return false;
+	}
+	Node& findsx(const string& name) {
+		aslist();
 		for (auto& n : list)
-			if (n.type == T_LIST && n.list.size() && n[0].type == T_STRING && n[0].str == name)
-				return n;
+			if (n.issx(name))  return n;
 		throw out_of_range("node not found: " + name);
 	}
 };
