@@ -9,6 +9,12 @@ namespace WizRun {
 
 	Node program({});
 
+	int reset() {
+		output = &cout;
+		program = Node({});
+		return 0;
+	}
+
 	int run(const Node& prog) {
 		program = prog;
 		auto classname = program.findsx("info").findsx("mainclass")[1].str;

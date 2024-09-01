@@ -98,7 +98,9 @@ namespace WizParse {
 	}
 
 	// >> begin parsing
-	void initprogram() {
+	void reset() {
+		tok.reset();
+		presults = {};
 		program = {
 			{ "info",
 				{ "author", "Professor of Virtual Anthropology" },
@@ -107,7 +109,7 @@ namespace WizParse {
 		};
 	}
 	int pfile(const string& fname) {
-		initprogram();
+		reset();
 		try {
 			if (!tok.tokenize(fname))
 				error(tok.errormsg);

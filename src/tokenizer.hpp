@@ -17,6 +17,7 @@ struct Tokenizer {
 		if (!fs.is_open())
 			return error("error: opening file: " + fname);
 		// setup
+		reset();
 		string line, t;
 		int linepos = 0, hpos = 0;
 		#define addtok() ( t.length() ? tok.push_back({ t, linepos, hpos }), t = "", 1 : 0 )
@@ -45,6 +46,11 @@ struct Tokenizer {
 		// ok
 		show();
 		return true;
+	}
+
+	int reset() {
+		tok = {}, errormsg = "", pos = 0;
+		return 0;
 	}
 
 	// helpers
