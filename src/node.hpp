@@ -45,6 +45,19 @@ struct Node {
 			if (n.issx(name))  return n;
 		throw out_of_range("node not found: " + name);
 	}
+	const string tostr() const {
+		switch (type) {
+			case Node::T_NUMBER:  return to_string(num);
+			case Node::T_STRING:  return str;
+			case Node::T_LIST:
+				string s = "( ";
+				for (const auto& nn : list)
+					s += nn.tostr();
+				s += " ) ";
+				return s;
+		}
+		return "$$UNKNOWN$$";  // shouldn't happen
+	}
 	// mutators
 	Node& operator[](size_t pos) {
 		aslist();

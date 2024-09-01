@@ -6,8 +6,7 @@
 using namespace std;
 
 int main() {
-	printf("parsing...\n");
-
+	// printf("parsing...\n");
 	// WizParse::pfile("test/test.wizz");
 	// WizRun::run(WizParse::program);
 

@@ -34,6 +34,7 @@ namespace WizParse {
 	Tokenizer tok;
 	vecs presults;
 	Node program({});
+	bool dotrace = false;
 
 	// >> error handling
 	int error(const string& s) {
@@ -46,17 +47,8 @@ namespace WizParse {
 		return error("unexpected token (" + tok.peek() + ")");
 	}
 	void trace(const string& s) {
-		cout << "> " << s << endl;
-	}
-	void shownode(const Node& n) {
-		switch (n.type) {
-			case Node::T_NUMBER:  cout << n.num << " ";  break;
-			case Node::T_STRING:  cout << n.str << " ";  break;
-			case Node::T_LIST:    cout << "( ";
-				for (const auto& nn : n.list)  shownode(nn);
-				cout << " ) ";
-				break;
-		}
+		if (dotrace)
+			cout << "> " << s << endl;
 	}
 
 	// >> basic token parsing
@@ -113,12 +105,13 @@ namespace WizParse {
 		try {
 			if (!tok.tokenize(fname))
 				error(tok.errormsg);
+			if (dotrace)  tok.show();
 			pclass();
-			shownode(program);  cout << endl;
+			trace(program.tostr());
 			return true;
 		}
 		catch (parse_error& p) {
-			shownode(program);  cout << endl;
+			trace(program.tostr());
 			throw p;
 		}
 	}

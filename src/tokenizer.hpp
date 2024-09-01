@@ -48,7 +48,6 @@ struct Tokenizer {
 			}
 		}
 		// ok
-		show();
 		return true;
 	}
 
