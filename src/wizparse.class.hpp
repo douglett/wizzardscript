@@ -15,8 +15,8 @@ namespace WizParse {
 		require("static class $identifier");
 		classname = presults[2];
 		trace("begin class: " + classname);
-		auto& static_init = program.push({ "function", classmember("static_init"), {} });
-		auto& static_init_block = static_init.push({ "block" });
+		// auto& static_init = program.push({ "function", classmember("static_init"), {} });
+		// auto& static_init_block = static_init.push({ "block" });
 		// set as main class
 		program.findsx("info").findsx("mainclass").push(classname.c_str());
 		// block or flat class
@@ -24,7 +24,7 @@ namespace WizParse {
 		if (!isblock)  require(";");
 		// class contents
 		while (true)
-			if      ( pfunction(static_init_block) )  ;
+			if      ( pfunction(program) )  ;
 			// else if ( pdim(static_init_block) )  ;
 			else    break;
 		// end class

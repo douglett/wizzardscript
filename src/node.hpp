@@ -25,28 +25,40 @@ struct Node {
 	}
 
 	// list methods
-	void aslist() {
+	void aslist() const {
 		if (type != T_LIST)
 			throw runtime_error("Node: expected list");
 	}
-	Node& operator[](size_t pos) {
-		aslist();
-		return list.at(pos);
-	}
-	Node& push(const Node& n) {
-		aslist();
-		list.push_back(n);
-		return list.back();
-	}
-	int issx(const string& sxname = "") {
+	int issx(const string& sxname = "") const {
 		if (type == T_LIST && list.size() && list[0].type == T_STRING)
 			return sxname == "" ? true : list[0].str == sxname;
 		return false;
+	}
+	// const accessors
+	const Node& operator[](size_t pos) const {
+		aslist();
+		return list.at(pos);
+	}
+	const Node& findsx(const string& name) const {
+		aslist();
+		for (auto& n : list)
+			if (n.issx(name))  return n;
+		throw out_of_range("node not found: " + name);
+	}
+	// mutators
+	Node& operator[](size_t pos) {
+		aslist();
+		return list.at(pos);
 	}
 	Node& findsx(const string& name) {
 		aslist();
 		for (auto& n : list)
 			if (n.issx(name))  return n;
 		throw out_of_range("node not found: " + name);
+	}
+	Node& push(const Node& n) {
+		aslist();
+		list.push_back(n);
+		return list.back();
 	}
 };
