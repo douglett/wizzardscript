@@ -2,5 +2,6 @@ static class test;
 
 int main() {
 	print 1, 2, 3;
+	a = 23;
 	print a;
 }

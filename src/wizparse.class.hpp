@@ -41,17 +41,25 @@ namespace WizParse {
 			return (type == "int" || error_expected("variable-as-number")), true;
 		else if (accept("$number"))
 			return parent.push( stoi(presults[0]) ), true;
-		return false;
+		// return false;
+		return error_expected("expression");
 	}
 
 	int pprint(Node& parent) {
 		if (!accept("print"))  return false;
 		auto& stmt = parent.push({ "print" });
-		// require("$number"),  stmt.push( stoi(presults[0]) );
-		pexpr(stmt) || error_expected("expression");
+		pexpr(stmt);
 		while (accept(","))
-			// require("$number"),  stmt.push( stoi(presults[0]) );
-			pexpr(stmt) || error_expected("expression");
+			pexpr(stmt);
+		require(";");
+		return true;
+	}
+
+	int pset(Node& parent) {
+		if (!accept("$identifier ="))  return false;
+		auto name = presults[0];
+		auto& stmt = parent.push({ "set_global", classmember(name) });
+		pexpr(stmt);
 		require(";");
 		return true;
 	}
@@ -65,6 +73,7 @@ namespace WizParse {
 		while (true) {
 			if (tok.eof() || tok.peek() == "}")  break;
 			pprint(block)
+				|| pset(block)
 				|| error_unexpected();
 		}
 		// block end

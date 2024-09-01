@@ -57,6 +57,7 @@ namespace WizRun {
 		else if (type == "print")  return rprint(sx);
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];
+		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );
 		// expressions
 		// unknown
 		else  return error("unexpected expression: " + sx.tostr());

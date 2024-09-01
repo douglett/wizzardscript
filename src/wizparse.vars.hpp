@@ -8,7 +8,7 @@ namespace WizParse {
 		// verify existance and type 
 		type = "int";
 		// output
-		parent.push({ "get_global", (classname + "__" + name).c_str() });
+		parent.push({ "get_global", classmember(name) });
 		return true;
 	}
 }
