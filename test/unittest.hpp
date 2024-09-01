@@ -8,17 +8,22 @@ struct UnitTest {
 		GREEN = "\033[32m",
 		CYAN = "\033[36m";
 	stringstream ss;
+	string suitename = "UnitTest", fpath = "test/";
 
-	virtual string suitename() { return "UnitTest"; }
 	virtual void setup() {
 		WizParse::reset();
 		WizRun::reset();
 		WizRun::output = &ss;
-		resetio();
+		ss.str(""), ss.clear();
 	}
 	virtual void teardown() {}
 	virtual void dotests() {}
-	void resetio() { ss.str(""), ss.clear(); }
+
+	int runfile(const string& file) {
+		WizParse::pfile(fpath + file);
+		ss.str(""), ss.clear();
+		return WizRun::run(WizParse::program);
+	}
 
 	int expect(const string& name, bool value) {
 		cout << "> running test: " << name << "... ";
@@ -29,7 +34,7 @@ struct UnitTest {
 	}
 
 	int runall() {
-		cout << CYAN << "Running test suite: " << suitename() << CLEARCOL << endl;
+		cout << CYAN << "Running test suite: " << suitename << CLEARCOL << endl;
 		setup();
 		try {
 			dotests();

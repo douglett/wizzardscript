@@ -1,0 +1,8 @@
+static class test;
+
+int main() {
+	int a = 4;
+	print a;
+	a = 23;
+	print a;
+}

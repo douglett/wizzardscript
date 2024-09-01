@@ -6,11 +6,14 @@
 #include "../test/test01.hpp"
 using namespace std;
 
-int main() {
+void test() {
 	printf("parsing...\n");
 	WizParse::pfile("test/test.wizz");
+	// WizParse::pfile("test/03_int_variables.wizz");
 	WizRun::run(WizParse::program);
+}
 
-	// run all tests
-	// Test01().runall();
+int main() {
+	// test();
+	Test01().runall();  // run all tests
 }

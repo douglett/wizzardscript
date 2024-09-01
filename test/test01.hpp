@@ -2,16 +2,18 @@
 #include "unittest.hpp"
 
 struct Test01 : public UnitTest {
-	string suitename() { return "Test01"; }
+	Test01() {
+		suitename = "Test01";
+	}
 
 	void dotests() {
-		WizParse::pfile("test/01_print.wizz");
-		WizRun::run(WizParse::program);
+		runfile("01_print.wizz");
 		expect( "print output", ss.str() == "1 2 3\n" );
 		
-		WizParse::pfile("test/02_class2.wizz");
-		resetio();
-		WizRun::run(WizParse::program);
+		runfile("02_class2.wizz");
 		expect( "print output", ss.str() == "1 2 3\n" );
+
+		runfile("03_int_variables.wizz");
+		expect( "print output", ss.str() == "4\n23\n" );
 	}
 };

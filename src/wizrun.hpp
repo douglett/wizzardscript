@@ -35,8 +35,8 @@ namespace WizRun {
 	int rprint(const Node& stmt) {
 		for (size_t i = 1; i < stmt.list.size(); i++) {
 			*output << (i > 1 ? " " : "");
-			if    (stmt[i].type == Node::T_STRING)  cout << stmt[i].str;
-			else  cout << rsxpr( stmt[i] );
+			if    (stmt[i].type == Node::T_STRING)  *output << stmt[i].str;
+			else  *output << rsxpr( stmt[i] );
 		}
 		*output << endl;
 		return 0;
