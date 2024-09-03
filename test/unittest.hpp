@@ -9,12 +9,14 @@ struct UnitTest {
 		CYAN = "\033[36m";
 	stringstream ss;
 	string suitename = "UnitTest", fpath = "test/";
+	int testno = 0;
 
 	virtual void setup() {
 		WizParse::reset();
 		WizRun::reset();
 		WizRun::output = &ss;
 		ss.str(""), ss.clear();
+		testno = 0;
 	}
 	virtual void teardown() {
 		WizRun::output = &cout;
@@ -41,8 +43,12 @@ struct UnitTest {
 		setup();
 		try {
 			dotests();
+			result = 1;
 		} catch (runtime_error& e) {
-			cerr << e.what() << endl;
+			cerr << RED << ":: ERROR ::" << CLEARCOL << endl
+				<< "   " << e.what() << endl;
+			if (testno > 0)
+				cerr << "   " << "at test: " << testno << endl; 
 		}
 		teardown();
 		return result;

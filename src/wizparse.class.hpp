@@ -3,6 +3,7 @@
 
 namespace WizParse {
 	static int pfunction(Node& parent);
+	static int pdim(Node& parent);
 
 	static string classname;
 
@@ -15,8 +16,8 @@ namespace WizParse {
 		require("static class $identifier");
 		classname = presults[2];
 		trace("begin class: " + classname);
-		// auto& static_init = program.push({ "function", classmember("static_init"), {} });
-		// auto& static_init_block = static_init.push({ "block" });
+		auto& static_init = program.push({ "function", classmember("static_init"), {} });
+		auto& static_init_block = static_init.push({ "block" });
 		// set as main class
 		program.findsx("info").findsx("mainclass").push(classname.c_str());
 		// block or flat class
@@ -25,7 +26,7 @@ namespace WizParse {
 		// class contents
 		while (true)
 			if      ( pfunction(program) )  ;
-			// else if ( pdim(static_init_block) )  ;
+			else if ( pdim(static_init_block) )  ;
 			else    break;
 		// end class
 		if (isblock)  require("}");
@@ -85,7 +86,7 @@ namespace WizParse {
 		while (true) {
 			if (tok.eof() || tok.peek() == "}")  break;
 			pprint(block)
-				|| pdim(block)
+				// || pdim(block)
 				|| pset(block)
 				|| error_unexpected();
 		}

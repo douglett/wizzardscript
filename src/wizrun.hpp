@@ -28,7 +28,7 @@ namespace WizRun {
 		program = prog;
 		// initialize and run class
 		auto classname = program.findsx("info").findsx("mainclass")[1].str;
-		// rcall(classname + "__static_init");
+		rcall(classname + "__static_init");
 		rcall(classname + "__main");
 		return 0;
 	}
