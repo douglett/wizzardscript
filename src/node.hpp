@@ -74,4 +74,10 @@ struct Node {
 		list.push_back(n);
 		return list.back();
 	}
+	Node pop() {
+		aslist();
+		auto n = list.back();
+		list.pop_back();
+		return n;
+	}
 };

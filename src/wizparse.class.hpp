@@ -47,15 +47,26 @@ namespace WizParse {
 	}
 
 	// TODO: implement
-	// static int pstrexpr(Node& parent) {
-	// }
+	static int pstrexpr(Node& parent) {
+		int pos = tok.pos;
+		string type;
+		if (pvarpath(parent, type))
+			return type == "string" ? true : ( tok.pos = pos, parent.pop(), false );
+		else if (accept("$literal"))
+			return parent.push( presults[0].c_str() ), true;
+		return false;
+	}
 
 	static int pprint(Node& parent) {
 		if (!accept("print"))  return false;
 		auto& stmt = parent.push({ "print" });
-		pexpr(stmt);
-		while (accept(","))
-			pexpr(stmt);
+		Node temp({});
+		do
+			if (pstrexpr(temp))
+				stmt.push({ "string", temp.pop() });
+			else
+				pexpr(stmt);
+		while (accept(","));
 		require(";");
 		return true;
 	}

@@ -64,7 +64,7 @@ namespace WizParse {
 			if      (rule == "$identifier")  found = isidentifier(tok.peek());
 			else if (rule == "$type")        found = istype(tok.peek());
 			else if (rule == "$number")      found = isnumber(tok.peek());
-			// else if (rule == "$literal" && )
+			else if (rule == "$literal")     found = isliteral(tok.peek());
 			else if (rule == "$EOF")         found = tok.eof();
 			else if (rule[0] == '$')         error("unknown rule: " + rule);
 			else if (rule == tok.peek())     found = true;

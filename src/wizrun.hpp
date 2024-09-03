@@ -27,6 +27,13 @@ namespace WizRun {
 		return 0;
 	}
 
+	string heaptostring(int ptr) {
+		string s;
+		for (auto i : heap.at(ptr).data)
+			s.push_back(i);
+		return s;
+	}
+
 	int run(const Node& prog) {
 		// reset program state
 		reset();
@@ -41,9 +48,14 @@ namespace WizRun {
 	// statement commands
 	int rprint(const Node& stmt) {
 		for (size_t i = 1; i < stmt.list.size(); i++) {
+			auto arg = stmt[i];
 			*output << (i > 1 ? " " : "");
-			if    (stmt[i].type == Node::T_STRING)  *output << stmt[i].str;
-			else  *output << rsxpr( stmt[i] );
+			if (arg.type == Node::T_STRING)
+				*output << arg.str;
+			else if (arg.issx("string"))
+				*output << heaptostring( rsxpr(arg[1]) );
+			else
+				*output << rsxpr(arg);
 		}
 		*output << endl;
 		return 0;
