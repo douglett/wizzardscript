@@ -6,6 +6,10 @@ namespace WizParse {
 	struct Dim { string type, name; };
 	static vector<Dim> scope;
 
+	void scope_reset() {
+		scope = {};
+	}
+
 	void scope_dim(const string& type, const string& name) {
 		for (const auto& dim : scope)
 			if (dim.name == name)

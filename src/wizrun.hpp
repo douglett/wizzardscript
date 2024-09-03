@@ -16,17 +16,19 @@ namespace WizRun {
 		throw runtime_error(msg);
 	}
 
-	// reset memory state
 	int reset() {
+		program = {};
+		mem = {};
 		return 0;
 	}
 
 	int run(const Node& prog) {
+		// reset program state
+		reset();
 		program = prog;
+		// initialize and run class
 		auto classname = program.findsx("info").findsx("mainclass")[1].str;
-		// run static-init
 		// rcall(classname + "__static_init");
-		// run main
 		rcall(classname + "__main");
 		return 0;
 	}

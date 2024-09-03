@@ -16,5 +16,5 @@ void test() {
 
 int main() {
 	Test01().runall();  // run all tests
-	// test();
+	test();
 }

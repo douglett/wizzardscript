@@ -28,6 +28,7 @@ namespace WizParse {
 	const char* classmember(const string& name);
 	int pclass();
 	// .vars
+	void scope_reset();
 	void scope_dim(const string& type, const string& name);
 	int pvarpath(Node& parent, string& type);
 	
@@ -96,6 +97,7 @@ namespace WizParse {
 	void reset() {
 		tok.reset();
 		presults = {};
+		scope_reset();
 		program = {
 			{ "info",
 				{ "author", "Professor of Virtual Anthropology" },
