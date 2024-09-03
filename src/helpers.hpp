@@ -25,6 +25,9 @@ int isliteral(const string& s) {
 }
 
 // strings
+string stripliteral(const string& str) {
+	return isliteral(str) ? str.substr(1, str.length()-2) : str;
+}
 vector<string> splitstr(const string str) {
 	vector<string> vs;
 	stringstream ss(str);

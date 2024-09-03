@@ -72,6 +72,14 @@ namespace WizRun {
 		heap[++heap_top] = { type, vector<int>(size, 0) };
 		return heap_top;
 	}
+	int rstrcopy(const Node& sx) {
+		int ptr = rsxpr(sx[1]);
+		auto& mem = heap.at(ptr);
+		mem = {};
+		for (auto c : stripliteral( sx[2].str ))
+			mem.data.push_back(c);
+		return ptr;
+	}
 
 	int rsxpr(const Node& sx) {
 		if (sx.type == Node::T_NUMBER)  return sx.num;
@@ -86,6 +94,7 @@ namespace WizRun {
 		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );
 		else if (type == "make")  return rmake(sx);
 		// expressions
+		else if (type == "string_copy")  return rstrcopy(sx);
 		// unknown
 		else  return error("unexpected expression: " + sx.tostr());
 		return 0;

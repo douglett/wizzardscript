@@ -3,7 +3,6 @@
 #include <vector>
 
 namespace WizParse {
-	struct Dim { string type, name; };
 	static vector<Dim> scope;
 
 	void scope_reset() {
@@ -17,7 +16,7 @@ namespace WizParse {
 		scope.push_back({ type, name });
 	}
 
-	static Dim& scope_find(const string& name) {
+	Dim& scope_find(const string& name) {
 		for (auto& dim : scope)
 			if (dim.name == name)
 				return dim;

@@ -28,8 +28,10 @@ namespace WizParse {
 	const char* classmember(const string& name);
 	int pclass();
 	// .vars
+	struct Dim { string type, name; };
 	void scope_reset();
 	void scope_dim(const string& type, const string& name);
+	Dim& scope_find(const string& name);
 	int pvarpath(Node& parent, string& type);
 	
 	// >> state

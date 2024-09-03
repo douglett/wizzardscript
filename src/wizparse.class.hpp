@@ -92,8 +92,18 @@ namespace WizParse {
 	static int pset(Node& parent) {
 		if (!accept("$identifier ="))  return false;
 		auto name = presults[0];
-		auto& stmt = parent.push({ "set_global", classmember(name) });
-		pexpr(stmt);
+
+		auto& dim = scope_find(name);
+		if (dim.type == "int") {
+			auto& stmt = parent.push({ "set_global", classmember(name) });
+			pexpr(stmt);
+		}
+		else if (dim.type == "string") {
+			auto& stmt = parent.push({ "string_copy", { "get_global", classmember(name) } });
+			pstrexpr(stmt);
+		}
+		else
+			error("unexpected type in set: " + dim.type);
 		require(";");
 		return true;
 	}
