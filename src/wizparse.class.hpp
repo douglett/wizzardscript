@@ -25,9 +25,10 @@ namespace WizParse {
 		if (!isblock)  require(";");
 		// class contents
 		while (true)
-			if      ( pfunction(program) )  ;
+			if      ( tok.peek() == "}" || tok.eof() )  break;
+			else if ( pfunction(program) )  ;
 			else if ( pdim(static_init_block) )  ;
-			else    break;
+			else    error_unexpected();
 		// end class
 		if (isblock)  require("}");
 		require("$EOF");

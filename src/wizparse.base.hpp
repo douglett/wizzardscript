@@ -60,16 +60,16 @@ namespace WizParse {
 		results = {};
 		// parse rules
 		for (const auto& rule : rules) {
-			if (rule == "$identifier" && isidentifier(tok.peek()))
-				results.push_back(tok.get());
-			else if (rule == "$type" && istype(tok.peek()))
-				results.push_back(tok.get());
-			else if (rule == "$number" && isnumber(tok.peek()))
-				results.push_back(tok.get());
+			bool found = false;
+			if      (rule == "$identifier")  found = isidentifier(tok.peek());
+			else if (rule == "$type")        found = istype(tok.peek());
+			else if (rule == "$number")      found = isnumber(tok.peek());
 			// else if (rule == "$literal" && )
-			else if (rule == "$EOF" && tok.eof())
-				results.push_back(tok.get());
-			else if (rule == tok.peek())
+			else if (rule == "$EOF")         found = tok.eof();
+			else if (rule[0] == '$')         error("unknown rule: " + rule);
+			else if (rule == tok.peek())     found = true;
+			// accept rule
+			if (found)
 				results.push_back(tok.get());
 			else
 				return tok.pos = pos, results = {}, false;

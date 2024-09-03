@@ -43,12 +43,11 @@ struct UnitTest {
 		setup();
 		try {
 			dotests();
+			cout << GREEN <<  "All tests passed" << CLEARCOL << endl;
 			result = 1;
 		} catch (runtime_error& e) {
-			cerr << RED << ":: ERROR ::" << CLEARCOL << endl
-				<< "   " << e.what() << endl;
-			if (testno > 0)
-				cerr << "   " << "at test: " << testno << endl; 
+			cout << RED << "ERROR in test " << testno << CLEARCOL << endl;
+			cout << "   " << e.what() << endl;
 		}
 		teardown();
 		return result;
