@@ -36,16 +36,19 @@ namespace WizParse {
 		return true;
 	}
 
-	// temporary 
+	// TODO: proper expression parsing
 	static int pexpr(Node& parent) {
 		string type;
 		if (pvarpath(parent, type))
 			return (type == "int" || error_expected("variable-as-number")), true;
 		else if (accept("$number"))
 			return parent.push( stoi(presults[0]) ), true;
-		// return false;
 		return error_expected("expression");
 	}
+
+	// TODO: implement
+	// static int pstrexpr(Node& parent) {
+	// }
 
 	static int pprint(Node& parent) {
 		if (!accept("print"))  return false;
@@ -61,10 +64,16 @@ namespace WizParse {
 		if (!accept("$type $identifier"))  return false;
 		auto type = presults[0], name = presults[1];
 		scope_dim(type, name);
-		if (accept("=")) {
+		if (type == "int") {
 			auto& stmt = parent.push({ "set_global", classmember(name) });
-			pexpr(stmt);
+			if    (accept("="))  pexpr(stmt);
+			else  stmt.push(0);
 		}
+		else if (type == "string") {
+			parent.push({ "set_global", classmember(name), { "make", "string", 0 } });
+		}
+		else
+			error("unexpected type: " + type);
 		require(";");
 		return true;
 	}

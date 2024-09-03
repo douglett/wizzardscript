@@ -7,10 +7,13 @@ namespace WizRun {
 	int rcall(const string& funcname);
 	int rsxpr(const Node& sx);
 
-	ostream* output = &cout;
+	struct HeapObject { string type; vector<int> data; };
 
+	ostream* output = &cout;
 	Node program({});
 	map<string, int> mem;
+	map<int, HeapObject> heap;
+	int heap_top = 0;
 
 	int error(const string& msg) {
 		throw runtime_error(msg);
@@ -19,6 +22,8 @@ namespace WizRun {
 	int reset() {
 		program = {};
 		mem = {};
+		heap = {};
+		heap_top = 0;
 		return 0;
 	}
 
@@ -49,6 +54,12 @@ namespace WizRun {
 			rsxpr( block[i] );
 		return 0;
 	}
+	int rmake(const Node& sx) {
+		auto& type = sx[1].str;
+		int size = rsxpr(sx[2]);
+		heap[++heap_top] = { type, vector<int>(size, 0) };
+		return heap_top;
+	}
 
 	int rsxpr(const Node& sx) {
 		if (sx.type == Node::T_NUMBER)  return sx.num;
@@ -61,6 +72,7 @@ namespace WizRun {
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];
 		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );
+		else if (type == "make")  return rmake(sx);
 		// expressions
 		// unknown
 		else  return error("unexpected expression: " + sx.tostr());
