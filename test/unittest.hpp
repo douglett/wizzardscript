@@ -16,7 +16,9 @@ struct UnitTest {
 		WizRun::output = &ss;
 		ss.str(""), ss.clear();
 	}
-	virtual void teardown() {}
+	virtual void teardown() {
+		WizRun::output = &cout;
+	}
 	virtual void dotests() {}
 
 	int runfile(const string& file) {
@@ -35,14 +37,14 @@ struct UnitTest {
 
 	int runall() {
 		cout << CYAN << "Running test suite: " << suitename << CLEARCOL << endl;
+		int result = 0;
 		setup();
 		try {
 			dotests();
-			return 1;
 		} catch (runtime_error& e) {
 			cerr << e.what() << endl;
-			return 0;
 		}
 		teardown();
+		return result;
 	}
 };

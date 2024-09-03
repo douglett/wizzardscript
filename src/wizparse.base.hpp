@@ -35,7 +35,7 @@ namespace WizParse {
 	Tokenizer tok;
 	vecs presults;
 	Node program({});
-	bool dotrace = true;
+	bool dotrace = false;
 
 	// >> error handling
 	int error(const string& s) {

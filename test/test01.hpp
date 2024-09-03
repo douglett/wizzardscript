@@ -8,12 +8,12 @@ struct Test01 : public UnitTest {
 
 	void dotests() {
 		runfile("01_print.wizz");
-		expect( "print output", ss.str() == "1 2 3\n" );
+		expect( "testing print", ss.str() == "1 2 3\n" );
 		
 		runfile("02_class2.wizz");
-		expect( "print output", ss.str() == "1 2 3\n" );
+		expect( "testing bracketed classes", ss.str() == "1 2 3\n" );
 
 		runfile("03_int_variables.wizz");
-		expect( "print output", ss.str() == "4\n23\n" );
+		expect( "testing int variables", ss.str() == "4\n23\n" );
 	}
 };

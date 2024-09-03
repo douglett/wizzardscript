@@ -7,13 +7,14 @@
 using namespace std;
 
 void test() {
-	printf("parsing...\n");
+	printf("\nparsing test.wizz...\n");
+	WizParse::dotrace = true;
 	WizParse::pfile("test/test.wizz");
 	// WizParse::pfile("test/03_int_variables.wizz");
 	WizRun::run(WizParse::program);
 }
 
 int main() {
-	// test();
 	Test01().runall();  // run all tests
+	// test();
 }
