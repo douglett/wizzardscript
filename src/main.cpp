@@ -1,7 +1,7 @@
 #include <iostream>
 #include "wizparse.base.hpp"
 #include "wizparse.class.hpp"
-#include "wizparse.vars.hpp"
+#include "wizparse.expr.hpp"
 #include "wizrun.hpp"
 #include "../test/test01.hpp"
 using namespace std;

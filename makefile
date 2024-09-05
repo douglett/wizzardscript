@@ -1,6 +1,6 @@
 OUT = main.out
 SRC = main.cpp
-HEAD = helpers.hpp tokenizer.hpp node.hpp wizparse.base.hpp wizparse.class.hpp wizparse.vars.hpp wizrun.hpp
+HEAD = helpers.hpp tokenizer.hpp node.hpp wizparse.base.hpp wizparse.class.hpp wizparse.expr.hpp wizrun.hpp
 UNIT = unittest.hpp test01.hpp
 
 $(OUT): $(addprefix src/,$(SRC) $(HEAD)) $(addprefix test/,$(UNIT))

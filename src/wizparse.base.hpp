@@ -27,12 +27,14 @@ namespace WizParse {
 	// .class
 	const char* classmember(const string& name);
 	int pclass();
-	// .vars
+	// .epxr
 	struct Dim { string type, name; };
 	void scope_reset();
 	void scope_dim(const string& type, const string& name);
 	Dim& scope_find(const string& name);
 	int pvarpath(Node& parent, string& type);
+	int pexpr(Node& parent, string& type, bool force = true);
+	int pexpras(Node& parent, const string& astype, bool force = true);
 	
 	// >> state
 	Tokenizer tok;
