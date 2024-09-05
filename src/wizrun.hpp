@@ -69,9 +69,10 @@ namespace WizRun {
 		return 0;
 	}
 	int rinput(const Node& stmt) {
-		int ptr = rsxpr(stmt[1]);
+		int ptr = rsxpr(stmt[2]);
 		auto& mem = rderef(ptr);
 		string s;
+		*output << stripliteral( stmt[1].str );  // prompt
 		getline(*input, s);
 		mem.data = {};
 		for (auto c : s)

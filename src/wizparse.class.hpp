@@ -96,7 +96,9 @@ namespace WizParse {
 
 	static int pinput(Node& parent) {
 		if (!accept("input"))  return false;
-		auto& stmt = parent.push({ "input" });
+		auto& stmt = parent.push({ "input", "\"\"" });
+		if (accept("$literal ,"))
+			stmt.list.back().str = presults[0];
 		string type;
 		if (!pvarpath(stmt, type) || type != "string")
 			error_expected("expected string variable");
