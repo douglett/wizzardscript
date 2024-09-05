@@ -42,7 +42,7 @@ namespace WizParse {
 		string type;
 		do {
 			pexpr(stmt, type);
-			if (type == "string")
+			if (type == "string" && stmt.list.back().type != Node::T_STRING)
 				stmt.push({ "string", stmt.pop() });
 		}
 		while (accept(","));
@@ -54,6 +54,7 @@ namespace WizParse {
 		if (!accept("$type $identifier"))  return false;
 		auto type = presults[0], name = presults[1];
 		scope_dim(type, name);
+		// dim by type
 		if (type == "int") {
 			auto& stmt = parent.push({ "set_global", classmember(name), 0 });
 			if (accept("=")) {
@@ -77,8 +78,8 @@ namespace WizParse {
 	static int pset(Node& parent) {
 		if (!accept("$identifier ="))  return false;
 		auto name = presults[0];
-
 		auto& dim = scope_find(name);
+		// set by type
 		if (dim.type == "int") {
 			auto& stmt = parent.push({ "set_global", classmember(name) });
 			pexpras(stmt, "int");

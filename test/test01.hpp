@@ -21,6 +21,6 @@ struct Test01 : public UnitTest {
 
 		testno++;
 		runfile("04_strings.wizz");
-		expect( "testing strings", ss.str() == "blah\nhello\n" );
+		expect( "testing strings", ss.str() == "1: blah\n2: hello\n" );
 	}
 };

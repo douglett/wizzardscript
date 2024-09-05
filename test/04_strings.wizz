@@ -2,8 +2,8 @@ static class test;
 
 string s = "blah";
 
-int main() {
-	print s;
+int main() { 
+	print "1:", s;
 	s = "hello";
-	print s;
+	print "2:", s;
 }

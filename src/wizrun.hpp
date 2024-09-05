@@ -51,7 +51,7 @@ namespace WizRun {
 			auto arg = stmt[i];
 			*output << (i > 1 ? " " : "");
 			if (arg.type == Node::T_STRING)
-				*output << arg.str;
+				*output << stripliteral( arg.str );
 			else if (arg.issx("string"))
 				*output << heaptostring( rsxpr(arg[1]) );
 			else

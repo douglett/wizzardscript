@@ -3,8 +3,6 @@ static class test;
 string s = "blah";
 
 int main() {
-	print 1, 2, 3;
-	print s;
-	s = "hello";
-	print s;
+	print "You are standing in front of a cheese. What do you do?";
+	//input s;
 }
