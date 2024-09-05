@@ -94,6 +94,16 @@ namespace WizParse {
 		return true;
 	}
 
+	static int pinput(Node& parent) {
+		if (!accept("input"))  return false;
+		auto& stmt = parent.push({ "input" });
+		string type;
+		if (!pvarpath(stmt, type) || type != "string")
+			error_expected("expected string variable");
+		require(";");
+		return true;
+	}
+
 	static int pblock(Node& parent, const string& name) {
 		// block start
 		require("{");
@@ -105,6 +115,7 @@ namespace WizParse {
 			pprint(block)
 				// || pdim(block)
 				|| pset(block)
+				|| pinput(block)
 				|| error_unexpected();
 		}
 		// block end

@@ -4,12 +4,14 @@
 
 namespace WizRun {
 	using namespace std;
-	int rcall(const string& funcname);
-	int rsxpr(const Node& sx);
-
 	struct HeapObject { string type; vector<int> data; };
 
+	int rcall(const string& funcname);
+	int rsxpr(const Node& sx);
+	HeapObject& rderef(int ptr);
+
 	ostream* output = &cout;
+	istream* input = &cin;
 	Node program({});
 	map<string, int> mem;
 	map<int, HeapObject> heap;
@@ -29,7 +31,7 @@ namespace WizRun {
 
 	string heaptostring(int ptr) {
 		string s;
-		for (auto i : heap.at(ptr).data)
+		for (auto i : rderef(ptr).data)
 			s.push_back(i);
 		return s;
 	}
@@ -46,6 +48,12 @@ namespace WizRun {
 	}
 
 	// statement commands
+	int rblock(const Node& block) {
+		for (size_t i = 1; i < block.list.size(); i++)
+			block[i].aslist(),
+			rsxpr( block[i] );
+		return 0;
+	}
 	int rprint(const Node& stmt) {
 		for (size_t i = 1; i < stmt.list.size(); i++) {
 			auto arg = stmt[i];
@@ -60,11 +68,22 @@ namespace WizRun {
 		*output << endl;
 		return 0;
 	}
-	int rblock(const Node& block) {
-		for (size_t i = 1; i < block.list.size(); i++)
-			block[i].aslist(),
-			rsxpr( block[i] );
+	int rinput(const Node& stmt) {
+		int ptr = rsxpr(stmt[1]);
+		auto& mem = rderef(ptr);
+		string s;
+		getline(*input, s);
+		mem.data = {};
+		for (auto c : s)
+			mem.data.push_back(c);
 		return 0;
+	}
+
+	// heap memory
+	HeapObject& rderef(int ptr) {
+		if (!heap.count(ptr))
+			error("memory dereference error: " + to_string(ptr));
+		return heap[ptr];
 	}
 	int rmake(const Node& sx) {
 		auto& type = sx[1].str;
@@ -74,7 +93,7 @@ namespace WizRun {
 	}
 	int rstrcopy(const Node& sx) {
 		int ptr = rsxpr(sx[1]);
-		auto& mem = heap.at(ptr);
+		auto& mem = rderef(ptr);
 		mem = {};
 		for (auto c : stripliteral( sx[2].str ))
 			mem.data.push_back(c);
@@ -89,12 +108,13 @@ namespace WizRun {
 		// statements
 		if (type == "block")  return rblock(sx);
 		else if (type == "print")  return rprint(sx);
+		else if (type == "input")  return rinput(sx);
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];
 		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );
 		else if (type == "make")  return rmake(sx);
-		// expressions
 		else if (type == "string_copy")  return rstrcopy(sx);
+		// expressions
 		// unknown
 		else  return error("unexpected expression: " + sx.tostr());
 		return 0;

@@ -4,5 +4,6 @@ string s = "blah";
 
 int main() {
 	print "You are standing in front of a cheese. What do you do?";
-	//input s;
+	input s;
+	print "You wrote:", s;
 }
