@@ -36,36 +36,38 @@ namespace WizParse {
 		return true;
 	}
 
-	// TODO: proper expression parsing
-	static int pexpr(Node& parent) {
-		string type;
+	static int pexpr(Node& parent, string& type, bool force = true) {
 		if (pvarpath(parent, type))
-			return (type == "int" || error_expected("variable-as-number")), true;
+			return true;
+		else if (accept("$literal"))
+			return parent.push( presults[0].c_str() ), type = "string", true;
 		else if (accept("$number"))
-			return parent.push( stoi(presults[0]) ), true;
-		return error_expected("expression");
+			return parent.push( stoi(presults[0]) ), type = "int", true;
+		else if (force)
+			error_expected("expression");
+		return type = "", false;
 	}
 
-	// TODO: implement
-	static int pstrexpr(Node& parent) {
-		int pos = tok.pos;
+	static int pexpras(Node& parent, const string& astype, bool force = true) {
 		string type;
-		if (pvarpath(parent, type))
-			return type == "string" ? true : ( tok.pos = pos, parent.pop(), false );
-		else if (accept("$literal"))
-			return parent.push( presults[0].c_str() ), true;
+		if (pexpr(parent, type, force)) {
+			if (type == astype)
+				return true;
+			else if (force)
+				error_expected("expression type: " + astype);
+		}
 		return false;
 	}
 
 	static int pprint(Node& parent) {
 		if (!accept("print"))  return false;
 		auto& stmt = parent.push({ "print" });
-		Node temp({});
-		do
-			if (pstrexpr(temp))
-				stmt.push({ "string", temp.pop() });
-			else
-				pexpr(stmt);
+		string type;
+		do {
+			pexpr(stmt, type);
+			if (type == "string")
+				stmt.push({ "string", stmt.pop() });
+		}
 		while (accept(","));
 		require(";");
 		return true;
@@ -76,12 +78,18 @@ namespace WizParse {
 		auto type = presults[0], name = presults[1];
 		scope_dim(type, name);
 		if (type == "int") {
-			auto& stmt = parent.push({ "set_global", classmember(name) });
-			if    (accept("="))  pexpr(stmt);
-			else  stmt.push(0);
+			auto& stmt = parent.push({ "set_global", classmember(name), 0 });
+			if (accept("=")) {
+				stmt.pop();
+				pexpras(stmt, "int");
+			}
 		}
 		else if (type == "string") {
 			parent.push({ "set_global", classmember(name), { "make", "string", 0 } });
+			if (accept("=")) {
+				auto& stmt = parent.push({ "string_copy", { "get_global", classmember(name) } });
+				pexpras(stmt, "string");
+			}
 		}
 		else
 			error("unexpected type: " + type);
@@ -96,11 +104,11 @@ namespace WizParse {
 		auto& dim = scope_find(name);
 		if (dim.type == "int") {
 			auto& stmt = parent.push({ "set_global", classmember(name) });
-			pexpr(stmt);
+			pexpras(stmt, "int");
 		}
 		else if (dim.type == "string") {
 			auto& stmt = parent.push({ "string_copy", { "get_global", classmember(name) } });
-			pstrexpr(stmt);
+			pexpras(stmt, "string");
 		}
 		else
 			error("unexpected type in set: " + dim.type);
