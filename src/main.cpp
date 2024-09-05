@@ -10,7 +10,9 @@ void test() {
 	printf("\nparsing test.wizz...\n");
 	WizParse::dotrace = true;
 	WizParse::pfile("test/test.wizz");
-	// WizParse::pfile("test/03_int_variables.wizz");
+	// WizParse::pfile("test/05_stdio.wizz");
+	// stringstream ss("1\n");
+	// WizRun::input = &ss;
 	WizRun::run(WizParse::program);
 }
 

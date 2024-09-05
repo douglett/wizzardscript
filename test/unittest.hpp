@@ -7,25 +7,29 @@ struct UnitTest {
 		RED = "\033[31m",
 		GREEN = "\033[32m",
 		CYAN = "\033[36m";
-	stringstream ss;
+	stringstream ssout, ssin;
 	string suitename = "UnitTest", fpath = "test/";
 	int testno = 0;
 
 	virtual void setup() {
 		WizParse::reset();
 		WizRun::reset();
-		WizRun::output = &ss;
-		ss.str(""), ss.clear();
+		WizRun::output = &ssout;
+		WizRun::input = &ssin;
+		ssout.str(""), ssout.clear();
+		ssin.str(""), ssin.clear();
 		testno = 0;
 	}
 	virtual void teardown() {
 		WizRun::output = &cout;
+		WizRun::input = &cin;
 	}
 	virtual void dotests() {}
 
 	int runfile(const string& file) {
 		WizParse::pfile(fpath + file);
-		ss.str(""), ss.clear();
+		ssout.str(""), ssout.clear();
+		// ssin.str(""), ssin.clear();
 		return WizRun::run(WizParse::program);
 	}
 

@@ -1,0 +1,8 @@
+static class test;
+
+string s;
+
+int main() { 
+	input "type 1: ", s;
+	print "you wrote", s;
+}
