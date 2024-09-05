@@ -1,0 +1,9 @@
+static class test;
+
+string s = "blah";
+
+int main() {
+	print s;
+	s = "hello";
+	print s;
+}
