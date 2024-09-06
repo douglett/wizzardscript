@@ -34,7 +34,7 @@ struct UnitTest {
 	}
 
 	int expect(const string& name, bool value) {
-		cout << "> running test: " << name << "... ";
+		cout << "> running test " << (testno < 10 ? "0" : "") << testno << ": " << name << "... ";
 		if (value)  cout << GREEN << "OK";
 		else        cout << RED << "Fail";
 		cout << CLEARCOL << endl;

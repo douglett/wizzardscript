@@ -27,5 +27,11 @@ struct Test01 : public UnitTest {
 		ssin.str("1\n"), ssin.clear();
 		runfile("05_stdio.wizz");
 		expect( "input", ssout.str() == "type 1: you wrote 1\n" );
+
+		testno++;
+		runfile("06_if_else.wizz");
+		WizRun::mem["test__a"] = 2,  WizRun::rcall("test__main");
+		WizRun::mem["test__a"] = 3,  WizRun::rcall("test__main");
+		expect( "if-else", ssout.str() == "hello\nwelcome\ngoodbye\n" );
 	}
 };
