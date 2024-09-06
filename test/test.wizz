@@ -1,10 +1,18 @@
 static class test;
 
-int a = 1;
+int a = 0;
 
 int main() {
-	while (a <= 5) {
-		print a;
-		a = a + 1;
-	}
+	// test all comparisons
+	if (1 == 1) { a = a + 1; }
+	if (1 != 2) { a = a + 1; }
+	if (1 <  2) { a = a + 1; }
+	if (1 <= 2) { a = a + 1; }
+	if (1 <= 1) { a = a + 1; }
+	if (2 >  1) { a = a + 1; }
+	if (2 >= 1) { a = a + 1; }
+	if (2 >= 2) { a = a + 1; }
+
+	// show results
+	print a;
 }
