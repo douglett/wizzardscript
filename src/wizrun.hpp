@@ -80,10 +80,14 @@ namespace WizRun {
 		return 0;
 	}
 	int rif(const Node& sx) {
-		for (size_t i = 1; i < sx.list.size(); i += 2) {
-			if (rsxpr(sx[i])) 
-				return rsxpr(sx[i+1]);
-		}
+		for (size_t i = 1; i < sx.list.size(); i += 2)
+			if (rsxpr( sx[i] )) 
+				return rsxpr( sx[i+1] );
+		return 0;
+	}
+	int rwhile(const Node& sx) {
+		while ( rsxpr(sx[1]) ) 
+			rsxpr( sx[2] );
 		return 0;
 	}
 
@@ -122,6 +126,7 @@ namespace WizRun {
 		else if (type == "print")  return rprint(sx);
 		else if (type == "input")  return rinput(sx);
 		else if (type == "if")  return rif(sx);
+		else if (type == "while")  return rwhile(sx);
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];
 		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );

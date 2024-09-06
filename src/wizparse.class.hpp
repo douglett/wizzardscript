@@ -37,6 +37,19 @@ namespace WizParse {
 		return true;
 	}
 
+	static int pfunction(Node& parent) {
+		if (!accept("$type $identifier ("))  return false;
+		auto type = presults[0];
+		auto name = presults[1];
+		trace("begin function: " + type + " " + name);
+		auto& func = parent.push({ "function", classmember(name), {} });
+		// TODO: parse function arguments
+		require(")");
+		pblock(func, "function");
+		// pblock(func, "function") || error_expected("block");
+		return true;
+	}
+
 	static int pprint(Node& parent) {
 		if (!accept("print"))  return false;
 		auto& stmt = parent.push({ "print" });
@@ -126,6 +139,14 @@ namespace WizParse {
 		return true;
 	}
 
+	static int pwhile(Node& parent) {
+		if (!accept("while"))  return false;
+		auto& stmt = parent.push({ "while" });
+		require("("), pexpras(stmt, "int"), require(")");
+		pblock(stmt, "while");
+		return true;
+	}
+
 	static int pblock(Node& parent, const string& name) {
 		// block start
 		require("{");
@@ -138,24 +159,12 @@ namespace WizParse {
 				|| pset(block)
 				|| pinput(block)
 				|| pif(block)
+				|| pwhile(block)
 				|| error_unexpected();
 		}
 		// block end
 		require("}");
 		trace("end block: " + name);
-		return true;
-	}
-
-	static int pfunction(Node& parent) {
-		if (!accept("$type $identifier ("))  return false;
-		auto type = presults[0];
-		auto name = presults[1];
-		trace("begin function: " + type + " " + name);
-		auto& func = parent.push({ "function", classmember(name), {} });
-		// TODO: parse function arguments
-		require(")");
-		pblock(func, "function");
-		// pblock(func, "function") || error_expected("block");
 		return true;
 	}
 }

@@ -75,7 +75,9 @@ namespace WizParse {
 	}
 
 	static int pex_atom(Node& parent, string& type) {
-		if (pvarpath(parent, type))
+		if (accept("true") || accept("false"))
+			return parent.push( presults[0].c_str() ), type = "int", true;
+		else if (pvarpath(parent, type))
 			return true;
 		else if (accept("$literal"))
 			return parent.push( presults[0].c_str() ), type = "string", true;
