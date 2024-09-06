@@ -1,9 +1,9 @@
 static class test;
 
-string s = "blah";
+int a = 1;
 
 int main() {
-	print "You are standing in front of a cheese. What do you do?";
-	input s;
-	print "You wrote:", s;
+	if (a == 1) {
+		print "hello";
+	}
 }

@@ -110,12 +110,14 @@ namespace WizRun {
 		if (type == "block")  return rblock(sx);
 		else if (type == "print")  return rprint(sx);
 		else if (type == "input")  return rinput(sx);
+		else if (type == "if")  return rsxpr(sx[1]) ? rsxpr(sx[2]) : 0;
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];
 		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );
 		else if (type == "make")  return rmake(sx);
 		else if (type == "string_copy")  return rstrcopy(sx);
 		// expressions
+		else if (type == "==")  return rsxpr(sx[1]) == rsxpr(sx[2]);
 		// unknown
 		else  return error("unexpected expression: " + sx.tostr());
 		return 0;

@@ -3,6 +3,7 @@
 
 namespace WizParse {
 	static int pfunction(Node& parent);
+	static int pblock(Node& parent, const string& name);
 	static int pdim(Node& parent);
 
 	static string classname;
@@ -106,6 +107,14 @@ namespace WizParse {
 		return true;
 	}
 
+	static int pif(Node& parent) {
+		if (!accept("if"))  return false;
+		auto& stmt = parent.push({ "if" });
+		require("("), pexpras(stmt, "int"), require(")");
+		pblock(stmt, "if");
+		return true;
+	}
+
 	static int pblock(Node& parent, const string& name) {
 		// block start
 		require("{");
@@ -115,9 +124,9 @@ namespace WizParse {
 		while (true) {
 			if (tok.eof() || tok.peek() == "}")  break;
 			pprint(block)
-				// || pdim(block)
 				|| pset(block)
 				|| pinput(block)
+				|| pif(block)
 				|| error_unexpected();
 		}
 		// block end

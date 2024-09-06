@@ -13,6 +13,7 @@ void test() {
 	// WizParse::pfile("test/05_stdio.wizz");
 	// stringstream ss("1\n");
 	// WizRun::input = &ss;
+	printf("\nrunning...\n");
 	WizRun::run(WizParse::program);
 }
 
