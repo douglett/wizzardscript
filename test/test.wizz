@@ -1,14 +1,10 @@
 static class test;
 
-int a = 123;
+int a = 1;
 
 int main() {
-	//while (a < 3) {
-	//	print a;
-	//	a = a + 1;
-	//}
-
 	while (true) {
 		print a;
+		a = a + 1;
 	}
 }

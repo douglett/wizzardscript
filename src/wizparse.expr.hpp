@@ -38,11 +38,13 @@ namespace WizParse {
 
 
 	// === Expressions ===
+	static int pex_or(Node& parent, string& lhs);
 	static int pex_equals(Node& parent, string& lhs);
+	static int pex_add(Node& parent, string& lhs);
 	static int pex_atom(Node& parent, string& type);
 
 	int pexpr(Node& parent, string& type, bool force) {
-		if (pex_equals(parent, type))
+		if (pex_or(parent, type))
 			return true;
 		else if (force)
 			error_expected("expression");
@@ -52,7 +54,7 @@ namespace WizParse {
 	int pexpras(Node& parent, const string& astype, bool force) {
 		int pos = tok.pos;
 		string type;
-		if (pex_equals(parent, type)) {
+		if (pex_or(parent, type)) {
 			if (type == astype)
 				return true;
 			else if (force)
@@ -63,13 +65,29 @@ namespace WizParse {
 		return false;
 	}
 
+	// TODO: implement
+	static int pex_or(Node& parent, string& lhs) {
+		return pex_equals(parent, lhs);
+	}
+
 	static int pex_equals(Node& parent, string& lhs) {
-		if (!pex_atom(parent, lhs))  return false;
+		if (!pex_add(parent, lhs))  return false;
 		if (accept("= =")) {
 			auto& stmt = parent.push({ "==", parent.pop() });
 			string rhs;
-			if (!pex_atom(stmt, rhs) || lhs != rhs || lhs != "int")
+			if (!pex_add(stmt, rhs) || lhs != rhs || lhs != "int")
 				error_expected("==: int expression on right-hand");
+		}
+		return true;
+	}
+
+	static int pex_add(Node& parent, string& lhs) {
+		if (!pex_atom(parent, lhs))  return false;
+		if (accept("+") || accept("-")) {
+			string rhs, op = presults[0];
+			auto& stmt = parent.push({ op.c_str(), parent.pop() });
+			if (!pex_atom(stmt, rhs) || lhs != rhs || lhs != "int")
+				error_expected(op + ": int expression on right-hand");
 		}
 		return true;
 	}
