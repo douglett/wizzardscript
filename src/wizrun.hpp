@@ -48,15 +48,15 @@ namespace WizRun {
 	}
 
 	// statement commands
-	int rblock(const Node& block) {
-		for (size_t i = 1; i < block.list.size(); i++)
-			block[i].aslist(),
-			rsxpr( block[i] );
+	int rblock(const Node& sx) {
+		for (size_t i = 1; i < sx.list.size(); i++)
+			sx[i].aslist(),
+			rsxpr( sx[i] );
 		return 0;
 	}
-	int rprint(const Node& stmt) {
-		for (size_t i = 1; i < stmt.list.size(); i++) {
-			auto arg = stmt[i];
+	int rprint(const Node& sx) {
+		for (size_t i = 1; i < sx.list.size(); i++) {
+			auto arg = sx[i];
 			*output << (i > 1 ? " " : "");
 			if (arg.type == Node::T_STRING)
 				*output << stripliteral( arg.str );
@@ -68,15 +68,22 @@ namespace WizRun {
 		*output << endl;
 		return 0;
 	}
-	int rinput(const Node& stmt) {
-		int ptr = rsxpr(stmt[2]);
+	int rinput(const Node& sx) {
+		int ptr = rsxpr(sx[2]);
 		auto& mem = rderef(ptr);
 		string s;
-		*output << stripliteral( stmt[1].str );  // prompt
+		*output << stripliteral( sx[1].str );  // prompt
 		getline(*input, s);
 		mem.data = {};
 		for (auto c : s)
 			mem.data.push_back(c);
+		return 0;
+	}
+	int rif(const Node& sx) {
+		for (size_t i = 1; i < sx.list.size(); i += 2) {
+			if (rsxpr(sx[i])) 
+				return rsxpr(sx[i+1]);
+		}
 		return 0;
 	}
 
@@ -102,15 +109,19 @@ namespace WizRun {
 	}
 
 	int rsxpr(const Node& sx) {
-		if (sx.type == Node::T_NUMBER)  return sx.num;
+		// basic types
+		if      (sx.type == Node::T_NUMBER)  return sx.num;
+		else if (sx.str == "true")  return 1;
+		else if (sx.str == "false")  return 0;
+		// ensure s-expression
 		if (!sx.issx())  return error("expected expression: " + sx.tostr());
 		auto& type = sx[0].str;
 
 		// statements
-		if (type == "block")  return rblock(sx);
+		if      (type == "block")  return rblock(sx);
 		else if (type == "print")  return rprint(sx);
 		else if (type == "input")  return rinput(sx);
-		else if (type == "if")  return rsxpr(sx[1]) ? rsxpr(sx[2]) : 0;
+		else if (type == "if")  return rif(sx);
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];
 		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );
@@ -119,8 +130,7 @@ namespace WizRun {
 		// expressions
 		else if (type == "==")  return rsxpr(sx[1]) == rsxpr(sx[2]);
 		// unknown
-		else  return error("unexpected expression: " + sx.tostr());
-		return 0;
+		else    return error("unexpected expression: " + sx.tostr());
 	}
 
 	int rcall(const string& funcname) {

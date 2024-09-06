@@ -108,10 +108,16 @@ namespace WizParse {
 	}
 
 	static int pif(Node& parent) {
+		// if condition
 		if (!accept("if"))  return false;
 		auto& stmt = parent.push({ "if" });
 		require("("), pexpras(stmt, "int"), require(")");
 		pblock(stmt, "if");
+		// else condition
+		if (accept("else")) {
+			stmt.push("true");
+			pblock(stmt, "if-else");
+		}
 		return true;
 	}
 
