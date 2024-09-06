@@ -33,5 +33,9 @@ struct Test01 : public UnitTest {
 		WizRun::mem["test__a"] = 2,  WizRun::rcall("test__main");
 		WizRun::mem["test__a"] = 3,  WizRun::rcall("test__main");
 		expect( "if-else", ssout.str() == "hello\nwelcome\ngoodbye\n" );
+
+		testno++;
+		runfile("07_while.wizz");
+		expect( "while", ssout.str() == "1\n2\n3\n4\n5\n" );
 	}
 };
