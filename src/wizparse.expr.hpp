@@ -42,16 +42,6 @@ namespace WizParse {
 	static int pex_atom(Node& parent, string& type);
 
 	int pexpr(Node& parent, string& type, bool force) {
-		// if (pvarpath(parent, type))
-		// 	return true;
-		// else if (accept("$literal"))
-		// 	return parent.push( presults[0].c_str() ), type = "string", true;
-		// else if (accept("$number"))
-		// 	return parent.push( stoi(presults[0]) ), type = "int", true;
-		// else if (force)
-		// 	error_expected("expression");
-		// return type = "", false;
-
 		if (pex_equals(parent, type))
 			return true;
 		else if (force)
@@ -60,13 +50,15 @@ namespace WizParse {
 	}
 
 	int pexpras(Node& parent, const string& astype, bool force) {
+		int pos = tok.pos;
 		string type;
-		if (pexpr(parent, type, force)) {
+		if (pex_equals(parent, type)) {
 			if (type == astype)
 				return true;
 			else if (force)
 				error_expected("expression type: " + astype);
-			// TODO: check logic here on non-force fail
+			else
+				tok.pos = pos, parent.pop();
 		}
 		return false;
 	}
