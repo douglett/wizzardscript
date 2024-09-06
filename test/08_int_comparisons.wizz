@@ -1,0 +1,18 @@
+static class test;
+
+int a = 0;
+
+int main() {
+	// test all comparisons
+	if (1 == 1) { a = a + 1; }
+	if (1 != 2) { a = a + 1; }
+	if (1 <  2) { a = a + 1; }
+	if (1 <= 2) { a = a + 1; }
+	if (1 <= 1) { a = a + 1; }
+	if (2 >  1) { a = a + 1; }
+	if (2 >= 1) { a = a + 1; }
+	if (2 >= 2) { a = a + 1; }
+
+	// show results
+	print a;
+}
