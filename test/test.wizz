@@ -3,7 +3,7 @@ static class test;
 int a = 1;
 
 int main() {
-	while (true) {
+	while (a <= 5) {
 		print a;
 		a = a + 1;
 	}

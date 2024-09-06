@@ -40,6 +40,7 @@ namespace WizParse {
 	// === Expressions ===
 	static int pex_or(Node& parent, string& lhs);
 	static int pex_equals(Node& parent, string& lhs);
+	static int pex_greater(Node& parent, string& lhs);
 	static int pex_add(Node& parent, string& lhs);
 	static int pex_atom(Node& parent, string& type);
 
@@ -71,12 +72,23 @@ namespace WizParse {
 	}
 
 	static int pex_equals(Node& parent, string& lhs) {
-		if (!pex_add(parent, lhs))  return false;
+		if (!pex_greater(parent, lhs))  return false;
 		if (accept("= =")) {
 			auto& stmt = parent.push({ "==", parent.pop() });
 			string rhs;
-			if (!pex_add(stmt, rhs) || lhs != rhs || lhs != "int")
+			if (!pex_greater(stmt, rhs) || lhs != rhs || lhs != "int")
 				error_expected("==: int expression on right-hand");
+		}
+		return true;
+	}
+
+	static int pex_greater(Node& parent, string& lhs) {
+		if (!pex_add(parent, lhs))  return false;
+		if (accept("> =") || accept(">") || accept("< =") || accept("<")) {
+			string rhs, op = joinstr(presults, "");
+			auto& stmt = parent.push({ op.c_str(), parent.pop() });
+			if (!pex_add(stmt, rhs) || lhs != rhs || lhs != "int")
+				error_expected(op + ": int expression on right-hand");
 		}
 		return true;
 	}

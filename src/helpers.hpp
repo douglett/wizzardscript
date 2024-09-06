@@ -36,3 +36,9 @@ vector<string> splitstr(const string str) {
 		vs.push_back(s);
 	return vs;
 }
+string joinstr(const vector<string>& vs, const string& glue = " ") {
+	string str;
+	for (auto& s : vs)
+		str += (str.length() ? glue : "") + s;
+	return str;
+}
