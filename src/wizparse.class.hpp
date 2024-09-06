@@ -113,10 +113,15 @@ namespace WizParse {
 		auto& stmt = parent.push({ "if" });
 		require("("), pexpras(stmt, "int"), require(")");
 		pblock(stmt, "if");
+		// else-if condition
+		while (accept("else if")) {
+			require("("), pexpras(stmt, "int"), require(")");
+			pblock(stmt, "else-if");
+		}
 		// else condition
 		if (accept("else")) {
 			stmt.push("true");
-			pblock(stmt, "if-else");
+			pblock(stmt, "else");
 		}
 		return true;
 	}
