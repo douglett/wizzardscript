@@ -4,14 +4,15 @@
 
 namespace WizRun {
 	using namespace std;
-	int reset();
-	string mainclass();
 
 	struct HeapObject { string type; vector<int> data; };
 
+	int reset();
+	string mainclass();
 	int rcall(const string& funcname);
-	int rsxpr(const Node& sx);
 	HeapObject& rderef(int ptr);
+	string heaptostring(int ptr);
+	static int rsxpr(const Node& sx);
 
 	ostream* output = &cout;
 	istream* input = &cin;
@@ -43,25 +44,25 @@ namespace WizRun {
 		return program.findsx("info").findsx("mainclass")[1].str;
 	}
 
-	string heaptostring(int ptr) {
-		string s;
-		for (auto i : rderef(ptr).data)
-			s.push_back(i);
-		return s;
-	}
-
-	int error(const string& msg) {
+	// helpful functions
+	static int error(const string& msg) {
 		throw runtime_error(msg);
 	}
 
 	// statement commands
-	int rblock(const Node& sx) {
+	int rcall(const string& funcname) {
+		for (const auto& func : program.list)
+			if (func.issx("function") && func[1].str == funcname)
+				return rsxpr( func.findsx("block") );
+		return error("missing function: " + funcname);
+	}
+	static int rblock(const Node& sx) {
 		for (size_t i = 1; i < sx.list.size(); i++)
 			sx[i].aslist(),
 			rsxpr( sx[i] );
 		return 0;
 	}
-	int rprint(const Node& sx) {
+	static int rprint(const Node& sx) {
 		for (size_t i = 1; i < sx.list.size(); i++) {
 			auto arg = sx[i];
 			*output << (i > 1 ? " " : "");
@@ -75,7 +76,7 @@ namespace WizRun {
 		*output << endl;
 		return 0;
 	}
-	int rinput(const Node& sx) {
+	static int rinput(const Node& sx) {
 		int ptr = rsxpr(sx[2]);
 		auto& mem = rderef(ptr);
 		string s;
@@ -86,24 +87,24 @@ namespace WizRun {
 			mem.data.push_back(c);
 		return 0;
 	}
-	int rif(const Node& sx) {
+	static int rif(const Node& sx) {
 		for (size_t i = 1; i < sx.list.size(); i += 2)
 			if (rsxpr( sx[i] )) 
 				return rsxpr( sx[i+1] );
 		return 0;
 	}
-	int rwhile(const Node& sx) {
+	static int rwhile(const Node& sx) {
 		while ( rsxpr(sx[1]) ) 
 			rsxpr( sx[2] );
 		return 0;
 	}
-	int ror(const Node& sx) {
+	static int ror(const Node& sx) {
 		for (size_t i = 1; i < sx.list.size(); i++)
 			if ( rsxpr(sx[i]) )
 				return true;
 		return false;
 	}
-	int rand(const Node& sx) {
+	static int rand(const Node& sx) {
 		for (size_t i = 1; i < sx.list.size(); i++)
 			if ( !rsxpr(sx[i]) )
 				return false;
@@ -116,13 +117,19 @@ namespace WizRun {
 			error("memory dereference error: " + to_string(ptr));
 		return heap[ptr];
 	}
-	int rmake(const Node& sx) {
+	string heaptostring(int ptr) {
+		string s;
+		for (auto i : rderef(ptr).data)
+			s.push_back(i);
+		return s;
+	}
+	static int rmake(const Node& sx) {
 		auto& type = sx[1].str;
 		int size = rsxpr(sx[2]);
 		heap[++heap_top] = { type, vector<int>(size, 0) };
 		return heap_top;
 	}
-	int rstrcopy(const Node& sx) {
+	static int rstrcopy(const Node& sx) {
 		int ptr = rsxpr(sx[1]);
 		auto& mem = rderef(ptr);
 		mem = {};
@@ -131,7 +138,7 @@ namespace WizRun {
 		return ptr;
 	}
 
-	int rsxpr(const Node& sx) {
+	static int rsxpr(const Node& sx) {
 		// basic types
 		if      (sx.type == Node::T_NUMBER)  return sx.num;
 		else if (sx.str == "true")  return 1;
@@ -164,12 +171,5 @@ namespace WizRun {
 		else if (type == "+" )  return rsxpr(sx[1]) +  rsxpr(sx[2]);
 		// unknown
 		else    return error("unexpected expression: " + sx.tostr());
-	}
-
-	int rcall(const string& funcname) {
-		for (const auto& func : program.list)
-			if (func.issx("function") && func[1].str == funcname)
-				return rsxpr( func.findsx("block") );
-		return error("missing function: " + funcname);
 	}
 }
