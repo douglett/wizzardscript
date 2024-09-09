@@ -3,15 +3,9 @@ static class test;
 int a = 0;
 
 int main() {
-	// test all comparisons
-	if (1 && 2 && 3 && 0) {
-		print "and";
-	}
+	hello();
+}
 
-	if (0 || 0) {
-		print "or";
-	}
-
-	// show results
-	//print a;
+int hello() {
+	print "hello";
 }

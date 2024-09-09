@@ -4,6 +4,9 @@
 
 namespace WizRun {
 	using namespace std;
+	int reset();
+	string mainclass();
+
 	struct HeapObject { string type; vector<int> data; };
 
 	int rcall(const string& funcname);
@@ -17,8 +20,15 @@ namespace WizRun {
 	map<int, HeapObject> heap;
 	int heap_top = 0;
 
-	int error(const string& msg) {
-		throw runtime_error(msg);
+	int run(const Node& prog) {
+		// reset program state
+		reset();
+		program = prog;
+		// initialize and run class
+		auto classname = mainclass();
+		rcall(classname + "__static_init");
+		rcall(classname + "__main");
+		return 0;
 	}
 
 	int reset() {
@@ -29,6 +39,10 @@ namespace WizRun {
 		return 0;
 	}
 
+	string mainclass() {
+		return program.findsx("info").findsx("mainclass")[1].str;
+	}
+
 	string heaptostring(int ptr) {
 		string s;
 		for (auto i : rderef(ptr).data)
@@ -36,15 +50,8 @@ namespace WizRun {
 		return s;
 	}
 
-	int run(const Node& prog) {
-		// reset program state
-		reset();
-		program = prog;
-		// initialize and run class
-		auto classname = program.findsx("info").findsx("mainclass")[1].str;
-		rcall(classname + "__static_init");
-		rcall(classname + "__main");
-		return 0;
+	int error(const string& msg) {
+		throw runtime_error(msg);
 	}
 
 	// statement commands
@@ -139,6 +146,7 @@ namespace WizRun {
 		else if (type == "input")  return rinput(sx);
 		else if (type == "if")  return rif(sx);
 		else if (type == "while")  return rwhile(sx);
+		else if (type == "call")  return rcall( mainclass() + "__" + sx[1].str );
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];
 		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );

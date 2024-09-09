@@ -89,25 +89,6 @@ namespace WizParse {
 		return true;
 	}
 
-	static int pset(Node& parent) {
-		if (!accept("$identifier ="))  return false;
-		auto name = presults[0];
-		auto& dim = scope_find(name);
-		// set by type
-		if (dim.type == "int") {
-			auto& stmt = parent.push({ "set_global", classmember(name) });
-			pexpras(stmt, "int");
-		}
-		else if (dim.type == "string") {
-			auto& stmt = parent.push({ "string_copy", { "get_global", classmember(name) } });
-			pexpras(stmt, "string");
-		}
-		else
-			error("unexpected type in set: " + dim.type);
-		require(";");
-		return true;
-	}
-
 	static int pinput(Node& parent) {
 		if (!accept("input"))  return false;
 		auto& stmt = parent.push({ "input", "\"\"" });
@@ -147,6 +128,34 @@ namespace WizParse {
 		return true;
 	}
 
+	static int pset(Node& parent) {
+		if (!accept("$identifier ="))  return false;
+		auto name = presults[0];
+		auto& dim = scope_find(name);
+		// set by type
+		if (dim.type == "int") {
+			auto& stmt = parent.push({ "set_global", classmember(name) });
+			pexpras(stmt, "int");
+		}
+		else if (dim.type == "string") {
+			auto& stmt = parent.push({ "string_copy", { "get_global", classmember(name) } });
+			pexpras(stmt, "string");
+		}
+		else
+			error("unexpected type in set: " + dim.type);
+		require(";");
+		return true;
+	}
+
+	static int pcall(Node& parent) {
+		if (!accept("$identifier ("))  return false;
+		auto name = presults[0];
+		// auto& dim = scope_find(name);
+		auto& call = parent.push({ "call", name.c_str(), {} });
+		require(") ;");
+		return true;
+	}
+
 	static int pblock(Node& parent, const string& name) {
 		// block start
 		require("{");
@@ -156,10 +165,11 @@ namespace WizParse {
 		while (true) {
 			if (tok.eof() || tok.peek() == "}")  break;
 			pprint(block)
-				|| pset(block)
 				|| pinput(block)
 				|| pif(block)
 				|| pwhile(block)
+				|| pset(block)
+				|| pcall(block)
 				|| error_unexpected();
 		}
 		// block end
