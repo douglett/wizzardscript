@@ -43,6 +43,7 @@ namespace WizParse {
 	static int pex_greater(Node& parent, string& lhs);
 	static int pex_add(Node& parent, string& lhs);
 	static int pex_atom(Node& parent, string& type);
+	int pex_test(Node& parent, string exprtype, string& lhs, string& rhs);
 
 	int pexpr(Node& parent, string& type, bool force) {
 		if (pex_or(parent, type))
@@ -68,7 +69,9 @@ namespace WizParse {
 
 	// TODO: implement
 	static int pex_or(Node& parent, string& lhs) {
-		return pex_equals(parent, lhs);
+		// return pex_equals(parent, lhs);
+		string rhs;
+		return pex_test(parent, "equals", lhs, rhs);
 	}
 
 	static int pex_equals(Node& parent, string& lhs) {
@@ -114,5 +117,42 @@ namespace WizParse {
 		else if (accept("$number"))
 			return parent.push( stoi(presults[0]) ), type = "int", true;
 		return type = "", false;
+	}
+
+
+
+	// >> expression test functions
+	
+	// int pex_nextfn_(Node& parent, string& type, const string& exprtype) {
+	// 	if      (exprtype == "equals")   return pex_greater(parent, type);
+	// 	else if (exprtype == "greater")  return pex_add(parent, type);
+	// 	else if (exprtype == "add")      return pex_atom(parent, type);
+	// 	return error(exprtype);
+	// }
+
+	int pex_nextfn(Node& parent, string& type, const string& exprtype) {
+		string rhs;
+		if      (exprtype == "equals")   return pex_test(parent, "greater", type, rhs);
+		else if (exprtype == "greater")  return pex_test(parent, "add", type, rhs);
+		else if (exprtype == "add")      return pex_atom(parent, type);
+		return error("nextfn: " + exprtype);
+	}
+
+	int pex_opmatch(const string& exprtype) {
+		if (exprtype == "equals")   return accept("= =") || accept("! =");
+		if (exprtype == "add")      return accept("+") || accept("-");
+		if (exprtype == "greater")  return accept("> =") || accept(">") || accept("< =") || accept("<");
+		return error("opmatch: " + exprtype);
+	}
+
+	int pex_test(Node& parent, string exprtype, string& lhs, string& rhs) {
+		if (!pex_nextfn(parent, lhs, exprtype))  return false;
+		if (pex_opmatch(exprtype)) {
+			string op = joinstr(presults, "");
+			auto& stmt = parent.push({ op.c_str(), parent.pop() });
+			if (!pex_nextfn(stmt, rhs, exprtype) || lhs != rhs || lhs != "int")
+				error_expected(op + ": int expression on right-hand");
+		}
+		return true;
 	}
 }
