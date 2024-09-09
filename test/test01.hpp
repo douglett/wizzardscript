@@ -40,6 +40,6 @@ struct Test01 : public UnitTest {
 
 		testno++;
 		runfile("08_int_comparisons.wizz");
-		expect( "int comparisons", ssout.str() == "8\n" );
+		expect( "int comparisons", ssout.str() == "8 2\n" );
 	}
 };
