@@ -5,18 +5,21 @@
 namespace WizParse {
 	// === Variables ===
 	static vector<Dim> scope;
+	static vector<Dim> fndef;
 
 	void scope_reset() {
 		scope = {};
+		fndef = {};
 	}
 
+
+	// === Variables ===
 	void scope_dim(const string& type, const string& name) {
 		for (const auto& dim : scope)
 			if (dim.name == name)
 				error("redefinition: " + name);
 		scope.push_back({ type, name });
 	}
-
 	Dim& scope_find(const string& name) {
 		for (auto& dim : scope)
 			if (dim.name == name)
@@ -24,7 +27,6 @@ namespace WizParse {
 		error("variable not defined: " + name);
 		throw "error";  // thrown above
 	}
-
 	int pvarpath(Node& parent, string& type) {
 		if (!accept("$identifier"))  return false;
 		auto name = presults[0];
@@ -35,6 +37,21 @@ namespace WizParse {
 		return true;
 	}
 
+
+	// === Function definitions ===
+	void func_def(const string& type, const string& name) {
+		for (const auto& def : fndef)
+			if (def.name == name)
+				error("function redefinition: " + name);
+		fndef.push_back({ type, name });
+	}
+	Dim& func_find(const string& name) {
+		for (auto& def : fndef)
+			if (def.name == name)
+				return def;
+		error("function not defined: " + name);
+		throw "error";  // thrown above
+	}
 
 
 	// === Expressions ===

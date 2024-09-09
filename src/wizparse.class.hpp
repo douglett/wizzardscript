@@ -42,6 +42,7 @@ namespace WizParse {
 		auto type = presults[0];
 		auto name = presults[1];
 		trace("begin function: " + type + " " + name);
+		func_def(type, name);
 		auto& func = parent.push({ "function", classmember(name), {} });
 		// TODO: parse function arguments
 		require(")");
@@ -150,7 +151,7 @@ namespace WizParse {
 	static int pcall(Node& parent) {
 		if (!accept("$identifier ("))  return false;
 		auto name = presults[0];
-		// auto& dim = scope_find(name);
+		auto& def = func_find(name);
 		auto& call = parent.push({ "call", name.c_str(), {} });
 		require(") ;");
 		return true;
