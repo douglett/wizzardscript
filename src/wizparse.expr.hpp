@@ -39,6 +39,7 @@ namespace WizParse {
 
 	// === Expressions ===
 	static int pex_or(Node& parent, string& lhs);
+	static int pex_and(Node& parent, string& lhs);
 	static int pex_equals(Node& parent, string& lhs);
 	static int pex_greater(Node& parent, string& lhs);
 	static int pex_add(Node& parent, string& lhs);
@@ -68,11 +69,32 @@ namespace WizParse {
 
 	// TODO: implement
 	static int pex_or(Node& parent, string& lhs) {
-		return pex_equals(parent, lhs);
+		if (!pex_and(parent, lhs))
+			return false;
+		while (accept("| |")) {
+			string rhs, op = joinstr(presults, "");
+			auto& stmt = parent.push({ op.c_str(), parent.pop() });
+			if (!pex_and(stmt, rhs) || lhs != rhs || lhs != "int")
+				error_expected(op + ": int expression on right-hand");
+		}
+		return true;
+	}
+
+	static int pex_and(Node& parent, string& lhs) {
+		if (!pex_equals(parent, lhs))
+			return false;
+		while (accept("& &")) {
+			string rhs, op = joinstr(presults, "");
+			auto& stmt = parent.push({ op.c_str(), parent.pop() });
+			if (!pex_equals(stmt, rhs) || lhs != rhs || lhs != "int")
+				error_expected(op + ": int expression on right-hand");
+		}
+		return true;
 	}
 
 	static int pex_equals(Node& parent, string& lhs) {
-		if (!pex_greater(parent, lhs))  return false;
+		if (!pex_greater(parent, lhs))
+			return false;
 		if (accept("= =") || accept("! =")) {
 			string rhs, op = joinstr(presults, "");
 			auto& stmt = parent.push({ op.c_str(), parent.pop() });
@@ -83,7 +105,8 @@ namespace WizParse {
 	}
 
 	static int pex_greater(Node& parent, string& lhs) {
-		if (!pex_add(parent, lhs))  return false;
+		if (!pex_add(parent, lhs))
+			return false;
 		if (accept("> =") || accept(">") || accept("< =") || accept("<")) {
 			string rhs, op = joinstr(presults, "");
 			auto& stmt = parent.push({ op.c_str(), parent.pop() });
@@ -94,7 +117,8 @@ namespace WizParse {
 	}
 
 	static int pex_add(Node& parent, string& lhs) {
-		if (!pex_atom(parent, lhs))  return false;
+		if (!pex_atom(parent, lhs))
+			return false;
 		if (accept("+") || accept("-")) {
 			string rhs, op = presults[0];
 			auto& stmt = parent.push({ op.c_str(), parent.pop() });

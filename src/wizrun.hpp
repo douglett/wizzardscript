@@ -90,6 +90,18 @@ namespace WizRun {
 			rsxpr( sx[2] );
 		return 0;
 	}
+	int ror(const Node& sx) {
+		for (size_t i = 1; i < sx.list.size(); i++)
+			if ( rsxpr(sx[i]) )
+				return true;
+		return false;
+	}
+	int rand(const Node& sx) {
+		for (size_t i = 1; i < sx.list.size(); i++)
+			if ( !rsxpr(sx[i]) )
+				return false;
+		return true;
+	}
 
 	// heap memory
 	HeapObject& rderef(int ptr) {
@@ -133,6 +145,8 @@ namespace WizRun {
 		else if (type == "make")  return rmake(sx);
 		else if (type == "string_copy")  return rstrcopy(sx);
 		// expressions
+		else if (type == "||")  return ror(sx);
+		else if (type == "&&")  return rand(sx);
 		else if (type == "==")  return rsxpr(sx[1]) == rsxpr(sx[2]);
 		else if (type == "!=")  return rsxpr(sx[1]) != rsxpr(sx[2]);
 		else if (type == ">=")  return rsxpr(sx[1]) >= rsxpr(sx[2]);
