@@ -4,6 +4,7 @@
 #include "wizparse.expr.hpp"
 #include "wizrun.hpp"
 #include "../test/01_basic/test01.hpp"
+#include "../test/02_maths/test02.hpp"
 using namespace std;
 
 void test() {
@@ -18,6 +19,9 @@ void test() {
 }
 
 int main() {
-	Test01().runall();  // run all tests
+	// run all tests
+	Test01().runall();
+	Test02().runall();
+	// WIP script
 	test();
 }

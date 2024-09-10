@@ -40,11 +40,7 @@ struct Test01 : public UnitTest {
 		expect( "while", ssout.str() == "1\n2\n3\n4\n5\n" );
 
 		testno++;
-		runfile("08_int_comparisons.wizz");
-		expect( "int comparisons", ssout.str() == "8 2\n" );
-
-		testno++;
-		runfile("09_functions.wizz");
+		runfile("08_functions.wizz");
 		expect( "functions", ssout.str() == "hello 3\n" );
 	}
 };
