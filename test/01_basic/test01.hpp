@@ -1,9 +1,10 @@
 #pragma once
-#include "unittest.hpp"
+#include "../unittest.hpp"
 
 struct Test01 : public UnitTest {
 	Test01() {
 		suitename = "Test01";
+		fpath += "01_basic/";
 	}
 
 	void dotests() {
