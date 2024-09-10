@@ -9,8 +9,8 @@ using namespace std;
 void test() {
 	printf("\nparsing test.wizz...\n");
 	WizParse::dotrace = true;
-	WizParse::pfile("test/test.wizz");
-	// WizParse::pfile("test/08_int_comparisons.wizz");
+	// WizParse::pfile("test/test.wizz");
+	WizParse::pfile("test/09_functions.wizz");
 	// stringstream ss("1\n");
 	// WizRun::input = &ss;
 	printf("\nrunning...\n");

@@ -41,5 +41,9 @@ struct Test01 : public UnitTest {
 		testno++;
 		runfile("08_int_comparisons.wizz");
 		expect( "int comparisons", ssout.str() == "8 2\n" );
+
+		testno++;
+		runfile("09_functions.wizz");
+		expect( "functions", ssout.str() == "hello 3\n" );
 	}
 };

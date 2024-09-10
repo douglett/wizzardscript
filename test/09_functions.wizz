@@ -1,0 +1,9 @@
+static class test;
+
+int main() {
+	print "hello", myvalue();
+}
+
+int myvalue() {
+	return 1 + 2;
+}
