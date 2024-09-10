@@ -1,17 +1,8 @@
 static class test;
 
+int a = 5;
+
 int main() {
-	hello();
-	a + 1;
+	a = a < 1 && a < 2 && a < 3 || a > 4;
 	print a;
 }
-
-int hello() {
-	print "hello", myvalue();
-}
-
-int myvalue() {
-	return 1 + 2;
-}
-
-int a = 0;

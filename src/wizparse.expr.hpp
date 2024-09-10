@@ -136,7 +136,7 @@ namespace WizParse {
 	static int pex_add(Node& parent, string& lhs) {
 		if (!pex_atom(parent, lhs))
 			return false;
-		if (accept("+") || accept("-")) {
+		while (accept("+") || accept("-")) {
 			string rhs, op = presults[0];
 			auto& stmt = parent.push({ op.c_str(), parent.pop() });
 			if (!pex_atom(stmt, rhs) || lhs != rhs || lhs != "int")
