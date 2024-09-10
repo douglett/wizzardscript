@@ -1,11 +1,12 @@
 static class test;
 
-int a = 0;
+int main() {
+	hello();
+	print a;
+}
 
 int hello() {
 	print "hello";
 }
 
-int main() {
-	hello();
-}
+int a = 0;

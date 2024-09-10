@@ -2,6 +2,7 @@
 #include "wizparse.base.hpp"
 
 namespace WizParse {
+	static int predefine();
 	static int pfunction(Node& parent);
 	static int pblock(Node& parent, const string& name);
 	static int pdim(Node& parent);
@@ -24,6 +25,8 @@ namespace WizParse {
 		// block or flat class
 		int isblock = accept("{");
 		if (!isblock)  require(";");
+		// predefine functions and variables before full parsing
+		predefine();
 		// class contents
 		while (true)
 			if      ( tok.peek() == "}" || tok.eof() )  break;
@@ -37,12 +40,27 @@ namespace WizParse {
 		return true;
 	}
 
+	static int predefine() {
+		int pos = tok.pos;
+		while (!tok.eof()) {
+			// TODO: will this always work correctly?
+			if (accept("$type $identifier ("))
+				func_def(presults[0], presults[1]);
+			else if (accept("$type $identifier"))
+				scope_dim(presults[0], presults[1]);
+			else
+				tok.get();
+		}
+		tok.pos = pos;
+		return true;
+	}
+
 	static int pfunction(Node& parent) {
 		if (!accept("$type $identifier ("))  return false;
 		auto type = presults[0];
 		auto name = presults[1];
 		trace("begin function: " + type + " " + name);
-		func_def(type, name);
+		// func_def(type, name);
 		auto& func = parent.push({ "function", classmember(name), {} });
 		// TODO: parse function arguments
 		require(")");
@@ -68,7 +86,7 @@ namespace WizParse {
 	static int pdim(Node& parent) {
 		if (!accept("$type $identifier"))  return false;
 		auto type = presults[0], name = presults[1];
-		scope_dim(type, name);
+		// scope_dim(type, name);
 		// dim by type
 		if (type == "int") {
 			auto& stmt = parent.push({ "set_global", classmember(name), 0 });
@@ -151,8 +169,8 @@ namespace WizParse {
 	static int pcall(Node& parent) {
 		if (!accept("$identifier ("))  return false;
 		auto name = presults[0];
-		auto& def = func_find(name);
-		auto& call = parent.push({ "call", name.c_str(), {} });
+		func_find(name);
+		parent.push({ "call", name.c_str(), {} });
 		require(") ;");
 		return true;
 	}
