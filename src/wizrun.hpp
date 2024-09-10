@@ -5,6 +5,10 @@
 namespace WizRun {
 	using namespace std;
 
+	struct wizrun_ctrl_return {
+		int rval = 0;
+		wizrun_ctrl_return(int value) : rval(value) {}
+	};
 	struct HeapObject { string type; vector<int> data; };
 
 	int reset();
@@ -53,7 +57,12 @@ namespace WizRun {
 	int rcall(const string& funcname) {
 		for (const auto& func : program.list)
 			if (func.issx("function") && func[1].str == funcname)
-				return rsxpr( func.findsx("block") );
+				try {
+					return rsxpr( func.findsx("block") );
+				}
+				catch (wizrun_ctrl_return& ctrl) {
+					return ctrl.rval;
+				}
 		return error("missing function: " + funcname);
 	}
 	static int rblock(const Node& sx) {
@@ -153,6 +162,7 @@ namespace WizRun {
 		else if (type == "input")  return rinput(sx);
 		else if (type == "if")  return rif(sx);
 		else if (type == "while")  return rwhile(sx);
+		else if (type == "return")  throw wizrun_ctrl_return( rsxpr(sx[1]) );
 		else if (type == "call")  return rcall( mainclass() + "__" + sx[1].str );
 		// memory
 		else if (type == "get_global")  return mem[ sx[1].str ];

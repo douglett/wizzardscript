@@ -149,7 +149,7 @@ namespace WizParse {
 	static int pex_call(Node& parent, string& type) {
 		if (!accept("$identifier ("))  return false;
 		auto name = presults[0];
-		func_find(name);
+		type = func_find(name).type;
 		parent.push({ "call", name.c_str(), {} });
 		// TODO: function arguments
 		require(")");

@@ -8,6 +8,7 @@ namespace WizParse {
 	static int pdim(Node& parent);
 
 	static string classname;
+	static string functype;
 
 	const char* classmember(const string& name) {
 		static string s;
@@ -83,10 +84,14 @@ namespace WizParse {
 		trace("begin function: " + type + " " + name);
 		// func_def(type, name);
 		auto& func = parent.push({ "function", classmember(name), {} });
+		// TODO: alternate return types
+		if (type != "int")
+			error("function: only int type supported: " + type);
+		functype = "int";
 		// TODO: parse function arguments
 		require(")");
 		pblock(func, "function");
-		// pblock(func, "function") || error_expected("block");
+		functype = "";
 		return true;
 	}
 
@@ -187,6 +192,20 @@ namespace WizParse {
 		return true;
 	}
 
+	static int preturn(Node& parent) {
+		if (!accept("return"))  return false;
+		auto& stmt = parent.push({ "return" });
+		string type;
+		if (pexpr(stmt, type)) {
+			if (type != functype)
+				error("return type mismatch: " + functype + ", " + type);
+		}
+		else
+			stmt.push(0);
+		require(";");
+		return true;
+	}
+
 	static int pexprline(Node& parent) {
 		string type;
 		if (!pexpr(parent, type, false))  return false;
@@ -207,6 +226,7 @@ namespace WizParse {
 				|| pif(block)
 				|| pwhile(block)
 				|| pset(block)
+				|| preturn(block)
 				|| pexprline(block)
 				|| error_unexpected();
 		}
