@@ -42,15 +42,36 @@ namespace WizParse {
 
 	static int predefine() {
 		int pos = tok.pos;
-		while (!tok.eof()) {
-			// TODO: will this always work correctly?
-			if (accept("$type $identifier ("))
-				func_def(presults[0], presults[1]);
-			else if (accept("$type $identifier"))
-				scope_dim(presults[0], presults[1]);
+		while (!tok.eof())
+			if (accept("$type $identifier (")) {
+				string type = presults[0], name = presults[1];
+				func_def(type, name);
+				// walk to first open bracket
+				while (!tok.eof() && tok.peek() != "{")
+					tok.get();
+				require("{");
+				// match brackets
+				int brackets = 1;
+				while (!tok.eof() && brackets > 0) {
+					if (tok.peek() == "{")
+						brackets++;
+					else if (tok.peek() == "}")
+						brackets--;
+					tok.get();
+				}
+				if (brackets != 0)
+					error("mismatched brackets in function: " + name);
+			}
+			else if (accept("$type $identifier")) {
+				string type = presults[0], name = presults[1];
+				scope_dim(type, name);
+				// walk to end-of-line
+				while (!tok.eof() && tok.peek() != ";")
+					tok.get();
+				require(";");
+			}
 			else
 				tok.get();
-		}
 		tok.pos = pos;
 		return true;
 	}

@@ -3,5 +3,5 @@ WizzardScript
 
 TODO:
 -----
-	- start project
-	- reimplement class
+
+- call in expression
