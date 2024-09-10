@@ -187,12 +187,10 @@ namespace WizParse {
 		return true;
 	}
 
-	static int pcall(Node& parent) {
-		if (!accept("$identifier ("))  return false;
-		auto name = presults[0];
-		func_find(name);
-		parent.push({ "call", name.c_str(), {} });
-		require(") ;");
+	static int pexprline(Node& parent) {
+		string type;
+		if (!pexpr(parent, type, false))  return false;
+		require(";");
 		return true;
 	}
 
@@ -209,7 +207,7 @@ namespace WizParse {
 				|| pif(block)
 				|| pwhile(block)
 				|| pset(block)
-				|| pcall(block)
+				|| pexprline(block)
 				|| error_unexpected();
 		}
 		// block end

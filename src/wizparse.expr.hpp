@@ -84,7 +84,7 @@ namespace WizParse {
 		return false;
 	}
 
-	// TODO: implement
+	// internal expression functions
 	static int pex_or(Node& parent, string& lhs) {
 		if (!pex_and(parent, lhs))
 			return false;
@@ -145,9 +145,22 @@ namespace WizParse {
 		return true;
 	}
 
+	// sub-atomic
+	static int pex_call(Node& parent, string& type) {
+		if (!accept("$identifier ("))  return false;
+		auto name = presults[0];
+		func_find(name);
+		parent.push({ "call", name.c_str(), {} });
+		// TODO: function arguments
+		require(")");
+		return true;
+	}
+
 	static int pex_atom(Node& parent, string& type) {
 		if (accept("true") || accept("false"))
 			return parent.push( presults[0].c_str() ), type = "int", true;
+		else if (pex_call(parent, type))
+			return true;
 		else if (pvarpath(parent, type))
 			return true;
 		else if (accept("$literal"))
