@@ -167,6 +167,9 @@ namespace WizRun {
 		else if (type == ">" )  return rsxpr(sx[1]) >  rsxpr(sx[2]);
 		else if (type == "<" )  return rsxpr(sx[1]) <  rsxpr(sx[2]);
 		else if (type == "+" )  return rsxpr(sx[1]) +  rsxpr(sx[2]);
+		else if (type == "-" )  return rsxpr(sx[1]) -  rsxpr(sx[2]);
+		else if (type == "*" )  return rsxpr(sx[1]) *  rsxpr(sx[2]);
+		else if (type == "/" )  return rsxpr(sx[1]) /  rsxpr(sx[2]);
 		// unknown
 		else    return error("unexpected expression: " + sx.tostr());
 	}

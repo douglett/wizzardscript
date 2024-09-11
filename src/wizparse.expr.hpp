@@ -60,6 +60,7 @@ namespace WizParse {
 	static int pex_equals(Node& parent, string& lhs);
 	static int pex_greater(Node& parent, string& lhs);
 	static int pex_add(Node& parent, string& lhs);
+	static int pex_mul(Node& parent, string& lhs);
 	static int pex_atom(Node& parent, string& type);
 
 	int pexpr(Node& parent, string& type, bool force) {
@@ -134,9 +135,21 @@ namespace WizParse {
 	}
 
 	static int pex_add(Node& parent, string& lhs) {
-		if (!pex_atom(parent, lhs))
+		if (!pex_mul(parent, lhs))
 			return false;
 		while (accept("+") || accept("-")) {
+			string rhs, op = presults[0];
+			auto& stmt = parent.push({ op.c_str(), parent.pop() });
+			if (!pex_mul(stmt, rhs) || lhs != rhs || lhs != "int")
+				error_expected(op + ": int expression on right-hand");
+		}
+		return true;
+	}
+
+	static int pex_mul(Node& parent, string& lhs) {
+		if (!pex_atom(parent, lhs))
+			return false;
+		while (accept("*") || accept("/")) {
 			string rhs, op = presults[0];
 			auto& stmt = parent.push({ op.c_str(), parent.pop() });
 			if (!pex_atom(stmt, rhs) || lhs != rhs || lhs != "int")

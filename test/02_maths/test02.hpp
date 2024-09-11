@@ -11,5 +11,9 @@ struct Test02 : public UnitTest {
 		testno++;
 		runfile("01_int_comparisons.wizz");
 		expect( "int comparisons", ssout.str() == "8 2\n" );
+
+		testno++;
+		runfile("02_add_mul.wizz");
+		expect( "int add and multiply", ssout.str() == "5 27 29\n" );
 	}
 };
