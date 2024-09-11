@@ -138,24 +138,24 @@ namespace WizRun {
 	static int rsxpr(const Node& sx) {
 		// basic types
 		if      (sx.type == Node::T_NUMBER)  return sx.num;
-		else if (sx.str == "true")  return 1;
-		else if (sx.str == "false")  return 0;
+		else if (sx.str == "true")           return 1;
+		else if (sx.str == "false")          return 0;
 		// ensure s-expression
-		if (!sx.issx())  return error("expected expression: " + sx.tostr());
-		auto& type = sx[0].str;
+		else if (!sx.issx())                 return error("expected expression: " + sx.tostr());
 
+		auto& type = sx[0].str;
 		// statements
-		if      (type == "block")  return rblock(sx);
-		else if (type == "print")  return rprint(sx);
-		else if (type == "input")  return rinput(sx);
-		else if (type == "if")  return rif(sx);
-		else if (type == "while")  return rwhile(sx);
+		if      (type == "block")   return rblock(sx);
+		else if (type == "print")   return rprint(sx);
+		else if (type == "input")   return rinput(sx);
+		else if (type == "if")      return rif(sx);
+		else if (type == "while")   return rwhile(sx);
+		else if (type == "call")    return rcall( mainclass() + "__" + sx[1].str );
 		else if (type == "return")  throw wizrun_ctrl_return( rsxpr(sx[1]) );
-		else if (type == "call")  return rcall( mainclass() + "__" + sx[1].str );
 		// memory
-		else if (type == "get_global")  return mem[ sx[1].str ];
-		else if (type == "set_global")  return mem[ sx[1].str ] = rsxpr( sx[2] );
-		else if (type == "make")  return rmake(sx);
+		else if (type == "get_global")   return mem[ sx[1].str ];
+		else if (type == "set_global")   return mem[ sx[1].str ] = rsxpr( sx[2] );
+		else if (type == "make")         return rmake(sx);
 		else if (type == "string_copy")  return rstrcopy(sx);
 		// expressions
 		else if (type == "||")  return rsxpr(sx[1]) || rsxpr(sx[2]);
