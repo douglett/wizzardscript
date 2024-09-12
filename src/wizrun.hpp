@@ -163,6 +163,7 @@ namespace WizRun {
 		else if (type == "set_global")   return mem[ sx[1].str ] = rsxpr( sx[2] );
 		else if (type == "make")         return rmake(sx);
 		else if (type == "get_offset")   return rderefat( rsxpr(sx[1]), rsxpr(sx[2]) );
+		else if (type == "set_offset")   return rderefat( rsxpr(sx[1]), rsxpr(sx[2]) ) = rsxpr(sx[3]);
 		else if (type == "string_copy")  return rstrcopy(sx);
 		// expressions
 		else if (type == "||")  return rsxpr(sx[1]) || rsxpr(sx[2]);

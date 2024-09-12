@@ -111,8 +111,7 @@ namespace WizParse {
 			if (accept("[")) {
 				auto& stmt = parent.push({ "set_global", classmember(name) });
 				auto& make = stmt.push({ "make", "int[]" });
-				if ( !pexpras(make, "int", false ))
-					make.push(0);
+				pexpras(make, "int");
 				require("]");
 			}
 			else if (accept("=")) {
@@ -190,20 +189,26 @@ namespace WizParse {
 	}
 
 	static int pset(Node& parent) {
-		if (!accept("$identifier ="))  return false;
-		auto name = presults[0];
-		auto& dim = scope_find(name);
-		// set by type
-		if (dim.type == "int") {
-			auto& stmt = parent.push({ "set_global", classmember(name) });
-			pexpras(stmt, "int");
+		// find variable path
+		int pos = tok.pos;
+		string type;
+		if (!pvarpath(parent, type))  return false;
+		if (!accept("="))  return parent.pop(), tok.pos = pos, false;
+		auto& vpath = parent.list.back();
+		// change get to set
+		if (type == "int") {
+			if      (vpath.issx("get_global"))  vpath.list[0].str = "set_global";
+			else if (vpath.issx("get_offset"))  vpath.list[0].str = "set_offset";
+			else    error("unexpected vpath type: " + vpath.sxtype());
+			pexpras(vpath, "int");
 		}
-		else if (dim.type == "string") {
-			auto& stmt = parent.push({ "string_copy", { "get_global", classmember(name) } });
+		else if (type == "string") {
+			auto& stmt = parent.push({ "string_copy", parent.pop() });
 			pexpras(stmt, "string");
 		}
 		else
-			error("unexpected type in set: " + dim.type);
+			error("unexpected type in set: " + type);
+		// OK
 		require(";");
 		return true;
 	}
@@ -241,8 +246,8 @@ namespace WizParse {
 				|| pinput(block)
 				|| pif(block)
 				|| pwhile(block)
-				|| pset(block)
 				|| preturn(block)
+				|| pset(block)
 				|| pexprline(block)
 				|| error_unexpected();
 		}

@@ -34,6 +34,9 @@ struct Node {
 			return sxname == "" ? true : list[0].str == sxname;
 		return false;
 	}
+	string sxtype() const {
+		return issx() ? list[0].str : "$NULL";
+	}
 	// const accessors
 	const Node& operator[](size_t pos) const {
 		aslist();
