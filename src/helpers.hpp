@@ -23,6 +23,12 @@ int isidentifier(const string& s) {
 int isliteral(const string& s) {
 	return s.length() >= 2 && s.front() == '"' && s.back() == '"';
 }
+int isarray(const string& s) {
+	return s.substr(s.length()-2, 2) == "[]" && isidentifier(s.substr(0, s.length()-2));
+}
+string basetype(const string& type) {
+	return isarray(type) ? type.substr(0, type.length()-2) : type;
+}
 
 // strings
 string stripliteral(const string& str) {

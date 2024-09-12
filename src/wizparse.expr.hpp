@@ -29,11 +29,20 @@ namespace WizParse {
 	}
 	int pvarpath(Node& parent, string& type) {
 		if (!accept("$identifier"))  return false;
+		// basic variable
 		auto name = presults[0];
-		// verify existance and type
-		type = scope_find(name).type;
-		// output
 		parent.push({ "get_global", classmember(name) });
+		type = scope_find(name).type;  // verify existance and type
+		// array subset
+		if (accept("[")) {
+			auto& get = parent.push({ "get_offset", parent.pop() });
+			pexpras(get, "int");
+			require("]");
+			if (!isarray(type))
+				error("expected array type: " + type);
+			type = basetype(type);
+		}
+		// output
 		return true;
 	}
 

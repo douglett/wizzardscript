@@ -43,9 +43,11 @@ namespace WizParse {
 
 	static int predefine() {
 		int pos = tok.pos;
+		string type, name;
+		Node ntemp({});
 		while (!tok.eof())
 			if (accept("$type $identifier (")) {
-				string type = presults[0], name = presults[1];
+				type = presults[0], name = presults[1];
 				func_def(type, name);
 				// walk to first open bracket
 				while (!tok.eof() && tok.peek() != "{")
@@ -64,7 +66,12 @@ namespace WizParse {
 					error("mismatched brackets in function: " + name);
 			}
 			else if (accept("$type $identifier")) {
-				string type = presults[0], name = presults[1];
+				type = presults[0], name = presults[1];
+				if (accept("[")) {
+					pexpras(ntemp, "int");
+					require("]");
+					type += "[]";
+				}
 				scope_dim(type, name);
 				// walk to end-of-line
 				while (!tok.eof() && tok.peek() != ";")
@@ -95,30 +102,25 @@ namespace WizParse {
 		return true;
 	}
 
-	static int pprint(Node& parent) {
-		if (!accept("print"))  return false;
-		auto& stmt = parent.push({ "print" });
-		string type;
-		do {
-			pexpr(stmt, type);
-			if (type == "string" && stmt.list.back().type != Node::T_STRING)
-				stmt.push({ "string", stmt.pop() });
-		}
-		while (accept(","));
-		require(";");
-		return true;
-	}
-
 	static int pdim(Node& parent) {
 		if (!accept("$type $identifier"))  return false;
 		auto type = presults[0], name = presults[1];
 		// scope_dim(type, name);
 		// dim by type
 		if (type == "int") {
-			auto& stmt = parent.push({ "set_global", classmember(name), 0 });
-			if (accept("=")) {
-				stmt.pop();
+			if (accept("[")) {
+				auto& stmt = parent.push({ "set_global", classmember(name) });
+				auto& make = stmt.push({ "make", "int[]" });
+				if ( !pexpras(make, "int", false ))
+					make.push(0);
+				require("]");
+			}
+			else if (accept("=")) {
+				auto& stmt = parent.push({ "set_global", classmember(name) });
 				pexpras(stmt, "int");
+			}
+			else {
+				parent.push({ "set_global", classmember(name), 0 });
 			}
 		}
 		else if (type == "string") {
@@ -130,6 +132,20 @@ namespace WizParse {
 		}
 		else
 			error("unexpected type: " + type);
+		require(";");
+		return true;
+	}
+
+	static int pprint(Node& parent) {
+		if (!accept("print"))  return false;
+		auto& stmt = parent.push({ "print" });
+		string type;
+		do {
+			pexpr(stmt, type);
+			if (type == "string" && stmt.list.back().type != Node::T_STRING)
+				stmt.push({ "string", stmt.pop() });
+		}
+		while (accept(","));
 		require(";");
 		return true;
 	}

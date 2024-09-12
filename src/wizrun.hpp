@@ -109,16 +109,22 @@ namespace WizRun {
 	}
 
 	// heap memory
-	HeapObject& rderef(int ptr) {
-		if (!heap.count(ptr))
-			error("memory dereference error: " + to_string(ptr));
-		return heap[ptr];
-	}
 	string heaptostring(int ptr) {
 		string s;
 		for (auto i : rderef(ptr).data)
 			s.push_back(i);
 		return s;
+	}
+	HeapObject& rderef(int ptr) {
+		if (!heap.count(ptr))
+			error("memory dereference error: " + to_string(ptr));
+		return heap[ptr];
+	}
+	int& rderefat(int ptr, int pos) {
+		auto& mem = rderef(ptr);
+		if (pos < 0 || pos >= (int)mem.data.size())
+			error("memory dereference bounds error: " + to_string(ptr) + " (at " + to_string(pos) + ")");
+		return mem.data[pos];
 	}
 	static int rmake(const Node& sx) {
 		auto& type = sx[1].str;
@@ -156,6 +162,7 @@ namespace WizRun {
 		else if (type == "get_global")   return mem[ sx[1].str ];
 		else if (type == "set_global")   return mem[ sx[1].str ] = rsxpr( sx[2] );
 		else if (type == "make")         return rmake(sx);
+		else if (type == "get_offset")   return rderefat( rsxpr(sx[1]), rsxpr(sx[2]) );
 		else if (type == "string_copy")  return rstrcopy(sx);
 		// expressions
 		else if (type == "||")  return rsxpr(sx[1]) || rsxpr(sx[2]);
