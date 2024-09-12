@@ -1,0 +1,8 @@
+static class test;
+
+int a[10];
+
+int main() {
+	a[1] = 101;
+	print a[0], a[1], a[2];
+}

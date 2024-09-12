@@ -1,0 +1,7 @@
+static class test;
+
+int a[10];
+
+int main() {
+	print "OK";
+}

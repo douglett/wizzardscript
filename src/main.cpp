@@ -5,6 +5,7 @@
 #include "wizrun.hpp"
 #include "../test/01_basic/test01.hpp"
 #include "../test/02_maths/test02.hpp"
+#include "../test/03_arrays/test03.hpp"
 using namespace std;
 
 void test() {
@@ -22,6 +23,7 @@ int main() {
 	// run all tests
 	Test01().runall();
 	Test02().runall();
+	Test03().runall();
 	// WIP script
 	test();
 }

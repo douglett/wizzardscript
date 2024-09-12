@@ -3,7 +3,7 @@
 
 struct Test01 : public UnitTest {
 	Test01() {
-		suitename = "Test01";
+		suitename = "Test 01 - Basic structure";
 		fpath += "01_basic/";
 	}
 
