@@ -38,9 +38,12 @@ namespace WizParse {
 			auto& get = parent.push({ "get_offset", parent.pop() });
 			pexpras(get, "int");
 			require("]");
-			if (!isarray(type))
+			if (isarray(type))
+				type = basetype(type);
+			else if (type == "string")
+				type = "int";
+			else
 				error("expected array type: " + type);
-			type = basetype(type);
 		}
 		// output
 		return true;
