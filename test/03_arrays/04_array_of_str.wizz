@@ -1,0 +1,9 @@
+static class test;
+
+string s[3];
+
+int main() {
+	s[0] = "hello";
+	s[2] = "world";
+	print s[0], s[1], s[2];
+}

@@ -12,7 +12,7 @@ void test() {
 	printf("\nparsing test.wizz...\n");
 	WizParse::dotrace = true;
 	WizParse::pfile("test/test.wizz");
-	// WizParse::pfile("test/09_functions.wizz");
+	// WizParse::pfile("test/03_arrays/04_array_of_str.wizz");
 	// stringstream ss("1\n");
 	// WizRun::input = &ss;
 	printf("\nrunning...\n");

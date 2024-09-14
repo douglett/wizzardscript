@@ -19,5 +19,9 @@ struct Test03 : public UnitTest {
 		testno++;
 		runfile("03_str_as_array.wizz");
 		expect( "string as array", ssout.str() == "hello\n104\nhallo\n" );
+
+		testno++;
+		runfile("04_array_of_str.wizz");
+		expect( "array of strings", ssout.str() == "hello  world\n" );
 	}
 };
