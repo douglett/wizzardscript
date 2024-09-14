@@ -5,7 +5,7 @@
 namespace WizParse {
 	// === Variables ===
 	static vector<Dim> scope;
-	static vector<Dim> fndef;
+	static vector<FnDef> fndef;
 
 	void scope_reset() {
 		scope = {};
@@ -51,13 +51,13 @@ namespace WizParse {
 
 
 	// === Function definitions ===
-	void func_def(const string& type, const string& name) {
+	void func_def(const string& type, const string& name, const vector<Dim>& args) {
 		for (const auto& def : fndef)
 			if (def.name == name)
 				error("function redefinition: " + name);
 		fndef.push_back({ type, name });
 	}
-	Dim& func_find(const string& name) {
+	FnDef& func_find(const string& name) {
 		for (auto& def : fndef)
 			if (def.name == name)
 				return def;

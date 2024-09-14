@@ -48,7 +48,7 @@ namespace WizParse {
 		while (!tok.eof())
 			if (accept("$type $identifier (")) {
 				type = presults[0], name = presults[1];
-				func_def(type, name);
+				func_def(type, name, {});
 				// walk to first open bracket
 				while (!tok.eof() && tok.peek() != "{")
 					tok.get();

@@ -29,11 +29,12 @@ namespace WizParse {
 	int pclass();
 	// .epxr
 	struct Dim { string type, name; };
+	struct FnDef { string type, name; vector<Dim> args; };
 	void scope_reset();
 	void scope_dim(const string& type, const string& name);
 	Dim& scope_find(const string& name);
-	void func_def(const string& type, const string& name);
-	Dim& func_find(const string& name);
+	void func_def(const string& type, const string& name, const vector<Dim>& args);
+	FnDef& func_find(const string& name);
 	int pvarpath(Node& parent, string& type);
 	int pexpr(Node& parent, string& type, bool force = true);
 	int pexpras(Node& parent, const string& astype, bool force = true);
