@@ -3,7 +3,7 @@
 
 namespace WizParse {
 	static int predefine();
-	static int pfunctiondef(bool predef);
+	static int pfunctiondef(string& name, bool predef);
 	static int pfunction(Node& parent);
 	static int pblock(Node& parent, const string& name);
 	static int pdim(Node& parent);
@@ -47,7 +47,7 @@ namespace WizParse {
 		string type, name;
 		Node ntemp({});
 		while (!tok.eof())
-			if (pfunctiondef(true)) {
+			if (pfunctiondef(name, true)) {
 				require("{");
 				int brackets = 1;
 				while (!tok.eof()) {
@@ -77,10 +77,14 @@ namespace WizParse {
 		return true;
 	}
 
-	static int pfunctiondef(bool predef) {
+	static int pfunctiondef(string& name, bool predef) {
 		if (!accept("$type $identifier ("))  return false;
 		FnDef def = { presults[0], presults[1] };
+		name = def.name;
 		trace("begin function def: " + def.type + " " + def.name);
+		// TODO: alternate return types
+		if (def.type != "int")
+			error("function: only int type supported: " + def.type);
 		// arguments
 		if (accept("$type $identifier")) {
 			def.args.push_back({ presults[0], presults[1] });
@@ -94,18 +98,18 @@ namespace WizParse {
 	}
 
 	static int pfunction(Node& parent) {
-		if (!accept("$type $identifier ("))  return false;
-		auto type = presults[0];
-		auto name = presults[1];
-		trace("begin function: " + type + " " + name);
-		// func_def(type, name);
-		auto& func = parent.push({ "function", classmember(name), {} });
-		// TODO: alternate return types
-		if (type != "int")
-			error("function: only int type supported: " + type);
-		functype = "int";
-		// TODO: parse function arguments
-		require(")");
+		string name;
+		if (!pfunctiondef(name, false))  return false;
+		auto& def = func_find(name);
+		functype = def.type;
+		// build function
+		auto& func = parent.push({ "function", classmember(def.name) });
+		auto& args = func.push({});
+		for (const auto& dim : def.args) {
+			args.push(dim.name.c_str());
+			// TODO: scope args
+		}
+		// parse block
 		pblock(func, "function");
 		functype = "";
 		return true;
