@@ -51,11 +51,11 @@ namespace WizParse {
 
 
 	// === Function definitions ===
-	void func_def(const string& type, const string& name, const vector<Dim>& args) {
-		for (const auto& def : fndef)
-			if (def.name == name)
-				error("function redefinition: " + name);
-		fndef.push_back({ type, name });
+	void func_def(const FnDef& def) {
+		for (const auto& d : fndef)
+			if (d.name == def.name)
+				error("function redefinition: " + def.name);
+		fndef.push_back(def);
 	}
 	FnDef& func_find(const string& name) {
 		for (auto& def : fndef)

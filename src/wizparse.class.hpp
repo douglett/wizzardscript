@@ -3,6 +3,7 @@
 
 namespace WizParse {
 	static int predefine();
+	static int pfunctiondef(bool predef);
 	static int pfunction(Node& parent);
 	static int pblock(Node& parent, const string& name);
 	static int pdim(Node& parent);
@@ -46,24 +47,16 @@ namespace WizParse {
 		string type, name;
 		Node ntemp({});
 		while (!tok.eof())
-			if (accept("$type $identifier (")) {
-				type = presults[0], name = presults[1];
-				func_def(type, name, {});
-				// walk to first open bracket
-				while (!tok.eof() && tok.peek() != "{")
-					tok.get();
+			if (pfunctiondef(true)) {
 				require("{");
-				// match brackets
 				int brackets = 1;
-				while (!tok.eof() && brackets > 0) {
-					if (tok.peek() == "{")
-						brackets++;
-					else if (tok.peek() == "}")
-						brackets--;
+				while (!tok.eof()) {
+					if      (tok.peek() == "{")  brackets++;
+					else if (tok.peek() == "}")  brackets--;
+					if      (brackets <= 0)  break;
 					tok.get();
 				}
-				if (brackets != 0)
-					error("mismatched brackets in function: " + name);
+				require("}");
 			}
 			else if (accept("$type $identifier")) {
 				type = presults[0], name = presults[1];
@@ -81,6 +74,22 @@ namespace WizParse {
 			else
 				tok.get();
 		tok.pos = pos;
+		return true;
+	}
+
+	static int pfunctiondef(bool predef) {
+		if (!accept("$type $identifier ("))  return false;
+		FnDef def = { presults[0], presults[1] };
+		trace("begin function def: " + def.type + " " + def.name);
+		// arguments
+		if (accept("$type $identifier")) {
+			def.args.push_back({ presults[0], presults[1] });
+		}
+		require(")");
+		// save definition
+		if (predef)
+			func_def(def);
+		trace("end function def");
 		return true;
 	}
 
