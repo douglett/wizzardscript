@@ -135,10 +135,9 @@ namespace WizRun {
 		if (sx[3].type == Node::T_NUMBER) 
 			mem.data.resize( size, sx[3].num );
 		// run constructor on each array member
-		else {
+		else
 			for (int i = 0; i < size; i++)
 				mem.data.push_back( rsxpr(sx[3]) );
-		}
 		return ptr;
 	}
 	static int rstrcopy(const Node& sx) {
@@ -173,6 +172,7 @@ namespace WizRun {
 		else if (type == "make")         return rmake(sx);
 		else if (type == "get_offset")   return rderefat( rsxpr(sx[1]), rsxpr(sx[2]) );
 		else if (type == "set_offset")   return rderefat( rsxpr(sx[1]), rsxpr(sx[2]) ) = rsxpr(sx[3]);
+		else if (type == "length")       return rderef( rsxpr(sx[1]) ).data.size();
 		else if (type == "string_copy")  return rstrcopy(sx);
 		// expressions
 		else if (type == "||")  return rsxpr(sx[1]) || rsxpr(sx[2]);

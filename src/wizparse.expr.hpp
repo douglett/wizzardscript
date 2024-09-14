@@ -181,10 +181,26 @@ namespace WizParse {
 		return true;
 	}
 
+	static int pex_membercall(Node& parent, string& type) {
+		int pos = tok.pos;
+		if (!pvarpath(parent, type))  return false;
+		if (!accept("."))  return tok.pos = pos, parent.pop(), false;
+		require("$identifier ( )");
+		auto name = presults[0];
+		// built in member calls
+		if (name == "length" && (isarray(type) || type == "string"))
+			parent.push({ "length", parent.pop() }), type = "int";
+		else
+			error("unexpected member call: " + name + " on " + type);
+		return true;
+	}
+
 	static int pex_atom(Node& parent, string& type) {
 		if (accept("true") || accept("false"))
 			return parent.push( presults[0].c_str() ), type = "int", true;
 		else if (pex_call(parent, type))
+			return true;
+		else if (pex_membercall(parent, type))
 			return true;
 		else if (pvarpath(parent, type))
 			return true;

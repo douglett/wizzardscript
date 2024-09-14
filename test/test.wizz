@@ -1,10 +1,8 @@
 static class test;
 
-string s[1];
+int a[6];
+string s = "fart";
 
 int main() {
-	print "hello";
-	print s[0];
-	s[0] = "asd";
-	print s[0];
+	print a, a.length(), s, s.length();
 }
