@@ -4,5 +4,6 @@ int a[6];
 string s = "hello";
 
 int main() {
-	print a, a.length(), s, s.length();
+	print a, a.length();
+	print s, s.length();
 }

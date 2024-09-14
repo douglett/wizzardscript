@@ -23,5 +23,9 @@ struct Test03 : public UnitTest {
 		testno++;
 		runfile("04_array_of_str.wizz");
 		expect( "array of strings", ssout.str() == "hello  world\n" );
+
+		testno++;
+		runfile("05_length.wizz");
+		expect( "array length", ssout.str() == "1 6\nhello 5\n" );
 	}
 };
