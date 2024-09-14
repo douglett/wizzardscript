@@ -116,7 +116,7 @@ namespace WizRun {
 		return s;
 	}
 	HeapObject& rderef(int ptr) {
-		if (!heap.count(ptr))
+		if (ptr <= 0 || !heap.count(ptr))
 			error("memory dereference error: " + to_string(ptr));
 		return heap[ptr];
 	}
@@ -129,7 +129,16 @@ namespace WizRun {
 	static int rmake(const Node& sx) {
 		auto& type = sx[1].str;
 		int size = rsxpr(sx[2]);
-		heap[++heap_top] = { type, vector<int>(size, 0) };
+		printf("make: %s %d :: %s\n", type.c_str(), size, sx[3].tostr().c_str());
+		// fill with number
+		if (sx[3].type == Node::T_NUMBER) 
+			heap[++heap_top] = { type, vector<int>(size, sx[3].num) };
+		// run constructor on each array member
+		else {
+			auto& mem = heap[++heap_top] = { type };
+			for (int i = 0; i < size; i++)
+				mem.data.push_back( rsxpr(sx[3]) );
+		}
 		return heap_top;
 	}
 	static int rstrcopy(const Node& sx) {

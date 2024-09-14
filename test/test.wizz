@@ -1,11 +1,8 @@
 static class test;
 
-string s;
+string s[1];
 
 int main() {
-	s = "hello";
-	print s;
+	print "hello";
 	print s[0];
-	s[1] = 97;
-	print s;
 }

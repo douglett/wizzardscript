@@ -111,7 +111,8 @@ namespace WizParse {
 			if (accept("[")) {
 				auto& stmt = parent.push({ "set_global", classmember(name) });
 				auto& make = stmt.push({ "make", "int[]" });
-				pexpras(make, "int");
+				pexpras(make, "int");  // size
+				make.push(0);  // default value
 				require("]");
 			}
 			else if (accept("=")) {
@@ -123,10 +124,20 @@ namespace WizParse {
 			}
 		}
 		else if (type == "string") {
-			parent.push({ "set_global", classmember(name), { "make", "string", 0 } });
-			if (accept("=")) {
+			if (accept("[")) {
+				auto& stmt = parent.push({ "set_global", classmember(name) });
+				auto& make = stmt.push({ "make", "string[]" });
+				pexpras(make, "int");  // size
+				make.push({ "make", "string", 0, 0 });  // default value
+				require("]");
+			}
+			else if (accept("=")) {
+				parent.push({ "set_global", classmember(name), { "make", "string", 0, 0 } });
 				auto& stmt = parent.push({ "string_copy", { "get_global", classmember(name) } });
 				pexpras(stmt, "string");
+			}
+			else {
+				parent.push({ "set_global", classmember(name), { "make", "string", 0, 0 } });
 			}
 		}
 		else
