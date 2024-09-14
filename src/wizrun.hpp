@@ -129,17 +129,17 @@ namespace WizRun {
 	static int rmake(const Node& sx) {
 		auto& type = sx[1].str;
 		int size = rsxpr(sx[2]);
-		printf("make: %s %d :: %s\n", type.c_str(), size, sx[3].tostr().c_str());
+		int ptr = ++heap_top;
+		auto& mem = heap[ptr] = { type };
 		// fill with number
 		if (sx[3].type == Node::T_NUMBER) 
-			heap[++heap_top] = { type, vector<int>(size, sx[3].num) };
+			mem.data.resize( size, sx[3].num );
 		// run constructor on each array member
 		else {
-			auto& mem = heap[++heap_top] = { type };
 			for (int i = 0; i < size; i++)
 				mem.data.push_back( rsxpr(sx[3]) );
 		}
-		return heap_top;
+		return ptr;
 	}
 	static int rstrcopy(const Node& sx) {
 		int ptr = rsxpr(sx[1]);
