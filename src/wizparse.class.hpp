@@ -65,7 +65,7 @@ namespace WizParse {
 					require("]");
 					type += "[]";
 				}
-				scope_dim(type, name);
+				scope_gdim(type, name);
 				// walk to end-of-line
 				while (!tok.eof() && tok.peek() != ";")
 					tok.get();
@@ -106,11 +106,12 @@ namespace WizParse {
 		auto& func = parent.push({ "function", classmember(def.name) });
 		auto& args = func.push({});
 		for (const auto& dim : def.args) {
-			args.push(dim.name.c_str());
-			// TODO: scope args
+			args.push( dim.name.c_str() );
+			scope_dim( dim.type, dim.name );
 		}
 		// parse block
 		pblock(func, "function");
+		scope_clear();
 		functype = "";
 		return true;
 	}

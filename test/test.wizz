@@ -1,8 +1,9 @@
 static class test;
 
-int a[6];
-string s = "hello";
+int fib(int i) {
+	return i;
+}
 
 int main() {
-	print a, a.length(), s, s.length();
+	print fib();
 }

@@ -4,35 +4,48 @@
 
 namespace WizParse {
 	// === Variables ===
-	static vector<Dim> scope;
+	static vector<Dim> gscope, scope;
 	static vector<FnDef> fndef;
 
 	void scope_reset() {
+		gscope = {};
 		scope = {};
 		fndef = {};
 	}
 
 
 	// === Variables ===
+	void scope_gdim(const string& type, const string& name) {
+		for (const auto& dim : gscope)
+			if (dim.name == name)
+				error("redefinition: " + name);
+		gscope.push_back({ type, name });
+	}
 	void scope_dim(const string& type, const string& name) {
 		for (const auto& dim : scope)
 			if (dim.name == name)
 				error("redefinition: " + name);
 		scope.push_back({ type, name });
 	}
-	Dim& scope_find(const string& name) {
-		for (auto& dim : scope)
-			if (dim.name == name)
-				return dim;
-		error("variable not defined: " + name);
-		throw "error";  // thrown above
+	void scope_clear() {
+		scope = {};
 	}
 	int pvarpath(Node& parent, string& type) {
 		if (!accept("$identifier"))  return false;
-		// basic variable
 		auto name = presults[0];
-		parent.push({ "get_global", classmember(name) });
-		type = scope_find(name).type;  // verify existance and type
+		// local variable
+		type = "";
+		for (auto& dim : scope)
+			if (dim.name == name)
+				type = dim.type, parent.push({ "get_local", classmember(name) });
+		// global variable
+		if (type == "")
+			for (auto& dim : gscope)
+				if (dim.name == name)
+					type = dim.type, parent.push({ "get_global", classmember(name) });
+		// missing variable
+		if (type == "")
+			error("variable not defined: " + name);
 		// array subset
 		if (accept("[")) {
 			auto& get = parent.push({ "get_offset", parent.pop() });

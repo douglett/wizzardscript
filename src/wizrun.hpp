@@ -22,6 +22,7 @@ namespace WizRun {
 	istream* input = &cin;
 	Node program({});
 	map<string, int> mem;
+	vector<map<string, int>> stack;
 	map<int, HeapObject> heap;
 	int heap_top = 0;
 
@@ -58,9 +59,13 @@ namespace WizRun {
 		for (const auto& func : program.list)
 			if (func.issx("function") && func[1].str == funcname)
 				try {
-					return rsxpr( func.findsx("block") );
+					stack.push_back({});
+					int rval = rsxpr( func.findsx("block") );
+					stack.pop_back();
+					return rval;
 				}
 				catch (wizrun_ctrl_return& ctrl) {
+					stack.pop_back();
 					return ctrl.rval;
 				}
 		return error("missing function: " + funcname);
@@ -169,6 +174,7 @@ namespace WizRun {
 		// memory
 		else if (type == "get_global")   return mem[ sx[1].str ];
 		else if (type == "set_global")   return mem[ sx[1].str ] = rsxpr( sx[2] );
+		else if (type == "get_local")    return stack.back()[ sx[1].str ];
 		else if (type == "make")         return rmake(sx);
 		else if (type == "get_offset")   return rderefat( rsxpr(sx[1]), rsxpr(sx[2]) );
 		else if (type == "set_offset")   return rderefat( rsxpr(sx[1]), rsxpr(sx[2]) ) = rsxpr(sx[3]);

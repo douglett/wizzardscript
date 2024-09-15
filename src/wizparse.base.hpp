@@ -31,8 +31,9 @@ namespace WizParse {
 	struct Dim { string type, name; };
 	struct FnDef { string type, name; vector<Dim> args; };
 	void scope_reset();
+	void scope_gdim(const string& type, const string& name);
 	void scope_dim(const string& type, const string& name);
-	Dim& scope_find(const string& name);
+	void scope_clear();
 	void func_def(const FnDef& def);
 	FnDef& func_find(const string& name);
 	int pvarpath(Node& parent, string& type);
