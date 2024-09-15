@@ -86,8 +86,17 @@ namespace WizParse {
 		if (def.type != "int")
 			error("function: only int type supported: " + def.type);
 		// arguments
+		// TODO: alternate argument types
 		if (accept("$type $identifier")) {
 			def.args.push_back({ presults[0], presults[1] });
+			if (presults[0] != "int")
+				error("function: only int arguments supported: " + presults[0]);
+			while (accept(",")) {
+				require("$type $identifier");
+				def.args.push_back({ presults[0], presults[1] });
+				if (presults[0] != "int")
+					error("function: only int arguments supported: " + presults[0]);
+			}
 		}
 		require(")");
 		// save definition

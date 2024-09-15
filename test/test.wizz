@@ -1,9 +1,13 @@
 static class test;
 
-int fib(int i) {
-	return i;
+int square(int i) {
+	return i * i;
+}
+
+int multi(int i, int j) {
+	return i * j;
 }
 
 int main() {
-	print fib(6);
+	print square(6), multi(6, 7);
 }

@@ -187,12 +187,18 @@ namespace WizParse {
 	static int pex_call(Node& parent, string& type) {
 		if (!accept("$identifier ("))  return false;
 		auto name = presults[0];
-		type = func_find(name).type;
+		auto& def = func_find(name);
+		type = def.type;
 		auto& call = parent.push({ "call", name.c_str() });
 		auto& args = call.push({});
 		// get arguments
-		pexpras(args, "int", false);
+		if (pexpras(args, "int", false))
+			while (accept(","))
+				pexpras(args, "int");
 		require(")");
+		// argument count check
+		if (args.list.size() != def.args.size())
+			error("function " + def.name + " expects " + to_string(def.args.size()) + " arguments");
 		return true;
 	}
 
