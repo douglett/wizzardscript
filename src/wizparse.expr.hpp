@@ -189,7 +189,7 @@ namespace WizParse {
 		auto name = presults[0];
 		auto& def = func_find(name);
 		type = def.type;
-		auto& call = parent.push({ "call", name.c_str() });
+		auto& call = parent.push({ "call", classmember(name) });
 		auto& args = call.push({});
 		// get arguments
 		if (pexpras(args, "int", false))

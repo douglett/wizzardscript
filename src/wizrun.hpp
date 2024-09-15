@@ -83,7 +83,7 @@ namespace WizRun {
 		vector<int> argvals;
 		for (auto& sx : args.list)
 			argvals.push_back( rsxpr(sx) );
-		return rcall( mainclass() + "__" + funcname.str, argvals );
+		return rcall( funcname.str, argvals );
 	}
 	static int rblock(const Node& sx) {
 		for (size_t i = 1; i < sx.list.size(); i++)
