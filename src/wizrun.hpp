@@ -13,7 +13,7 @@ namespace WizRun {
 
 	int reset();
 	string mainclass();
-	int rcall(const string& funcname);
+	int rcall(const string& funcname, const vector<int>& args = {});
 	HeapObject& rderef(int ptr);
 	string heaptostring(int ptr);
 	static int rsxpr(const Node& sx);
@@ -55,11 +55,20 @@ namespace WizRun {
 	}
 
 	// statement commands
-	int rcall(const string& funcname) {
+	int rcall(const string& funcname, const vector<int>& args) {
 		for (const auto& func : program.list)
 			if (func.issx("function") && func[1].str == funcname)
 				try {
 					stack.push_back({});
+					// arguments
+					auto& fnargs = func[2].list;
+					if (fnargs.size() != args.size())
+						error("argument length mismatch in " + funcname
+							+ ": got " + to_string(args.size()) 
+							+ ", expected " + to_string(fnargs.size()) );
+					for (size_t i = 0; i < fnargs.size(); i++)
+						stack.back()[ fnargs[i].str ] = args[i];
+					// do call
 					int rval = rsxpr( func.findsx("block") );
 					stack.pop_back();
 					return rval;
@@ -69,6 +78,12 @@ namespace WizRun {
 					return ctrl.rval;
 				}
 		return error("missing function: " + funcname);
+	}
+	static int rcallinternal(const Node& funcname, const Node& args) {
+		vector<int> argvals;
+		for (auto& sx : args.list)
+			argvals.push_back( rsxpr(sx) );
+		return rcall( mainclass() + "__" + funcname.str, argvals );
 	}
 	static int rblock(const Node& sx) {
 		for (size_t i = 1; i < sx.list.size(); i++)
@@ -169,7 +184,7 @@ namespace WizRun {
 		else if (type == "input")   return rinput(sx);
 		else if (type == "if")      return rif(sx);
 		else if (type == "while")   return rwhile(sx);
-		else if (type == "call")    return rcall( mainclass() + "__" + sx[1].str );
+		else if (type == "call")    return rcallinternal( sx[1], sx[2] );
 		else if (type == "return")  throw wizrun_ctrl_return( rsxpr(sx[1]) );
 		// memory
 		else if (type == "get_global")   return mem[ sx[1].str ];

@@ -37,7 +37,7 @@ namespace WizParse {
 		type = "";
 		for (auto& dim : scope)
 			if (dim.name == name)
-				type = dim.type, parent.push({ "get_local", classmember(name) });
+				type = dim.type, parent.push({ "get_local", name.c_str() });
 		// global variable
 		if (type == "")
 			for (auto& dim : gscope)
@@ -188,8 +188,10 @@ namespace WizParse {
 		if (!accept("$identifier ("))  return false;
 		auto name = presults[0];
 		type = func_find(name).type;
-		parent.push({ "call", name.c_str(), {} });
-		// TODO: function arguments
+		auto& call = parent.push({ "call", name.c_str() });
+		auto& args = call.push({});
+		// get arguments
+		pexpras(args, "int", false);
 		require(")");
 		return true;
 	}
