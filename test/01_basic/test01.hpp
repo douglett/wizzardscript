@@ -44,7 +44,11 @@ struct Test01 : public UnitTest {
 		expect( "functions", ssout.str() == "hello 3\n" );
 
 		testno++;
-		runfile("09_function_int_args.wizz");
+		runfile("09_func_int_args.wizz");
 		expect( "function int arguments", ssout.str() == "36 42\n" );
+
+		testno++;
+		runfile("10_func_fibonacci.wizz");
+		expect( "function fibonacci sequence (with recursion)", ssout.str() == "0\n1\n1\n2\n3\n5\n8\n13\n21\n34\n55\n" );
 	}
 };

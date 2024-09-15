@@ -1,0 +1,23 @@
+static class test;
+
+int fib(int i) {
+	if (i <= 0) {
+		return 0;
+	}
+	else if (i <= 2) {
+		return 1;
+	}
+	else {
+		return fib(i - 2) + fib(i - 1);
+	}
+}
+
+// global counter with shadowed name
+int i = 0;
+
+int main() {
+	while (i <= 10) {
+		print fib(i);
+		i = i + 1;
+	}
+}
