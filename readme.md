@@ -4,4 +4,8 @@ WizzardScript
 TODO:
 -----
 
-- call in expression
+- local variables
+- array + string destructors
+- array of string descructors
+- 2d arrays
+- array push / pop
